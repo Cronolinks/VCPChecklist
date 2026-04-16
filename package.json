@@ -1,0 +1,8 @@
+{
+  "name": "vcp-suporte-montagem",
+  "version": "1.0.0",
+  "description": "VCP Suporte Montagem - Checklist de Riscos VW",
+  "dependencies": {
+    "nodemailer": "^6.9.13"
+  }
+}

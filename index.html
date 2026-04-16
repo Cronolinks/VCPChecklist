@@ -1,0 +1,4533 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#001e50">
+<title>VCP Suporte Montagem</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
+<style>
+  :root {
+    --vw-blue: #001e50;
+    --vw-light-blue: #0040c1;
+    --vw-silver: #c0c8d2;
+    --vw-dark: #0a0e1a;
+    --ok-color: #00c853;
+    --nok-color: #d50000;
+    --pending-color: #78909c;
+    --card-bg: #111827;
+    --card-border: #1e2d47;
+    --text-primary: #e8ecf2;
+    --text-secondary: #8899b0;
+    --accent: #1565c0;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body {
+    background: var(--vw-dark);
+    color: var(--text-primary);
+    font-family: 'Barlow', sans-serif;
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
+    -webkit-font-smoothing: antialiased;
+    overscroll-behavior: none;
+  }
+
+  /* HEADER */
+  .app-header {
+    background: linear-gradient(135deg, var(--vw-blue) 0%, #002575 100%);
+    padding: calc(env(safe-area-inset-top) + 14px) 16px 12px;
+    padding-left: calc(env(safe-area-inset-left) + 16px);
+    padding-right: calc(env(safe-area-inset-right) + 16px);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 2px solid var(--vw-light-blue);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+  }
+  .header-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .vw-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .vw-logo-circle {
+    width: 36px;
+    height: 36px;
+    border: 2.5px solid #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 14px;
+    color: #fff;
+    letter-spacing: -1px;
+    background: rgba(255,255,255,0.08);
+    flex-shrink: 0;
+  }
+  .app-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    color: #fff;
+    letter-spacing: 0.5px;
+    line-height: 1.2;
+  }
+  .app-subtitle {
+    font-size: 10px;
+    color: rgba(255,255,255,0.6);
+    font-weight: 300;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .header-date {
+    text-align: right;
+  }
+  .date-value {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    color: #fff;
+  }
+  .date-label {
+    font-size: 9px;
+    color: rgba(255,255,255,0.5);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+  }
+
+  /* SECTOR SELECTOR */
+  .sector-nav {
+    background: #0d1526;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--card-border);
+  }
+  .sector-nav-label {
+    font-size: 10px;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+  }
+  .sector-select {
+    width: 100%;
+    background: var(--card-bg);
+    color: var(--text-primary);
+    border: 1.5px solid var(--card-border);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%238899b0' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+  }
+  .sector-select:focus { outline: none; border-color: var(--vw-light-blue); }
+
+  /* PROGRESS BAR */
+  .progress-bar-wrap {
+    background: #0d1526;
+    padding: 8px 12px 10px;
+    border-bottom: 1px solid var(--card-border);
+  }
+  .progress-info {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+    font-size: 11px;
+    color: var(--text-secondary);
+  }
+  .progress-counts {
+    display: flex;
+    gap: 12px;
+    font-size: 11px;
+  }
+  .count-ok { color: var(--ok-color); font-weight: 600; }
+  .count-nok { color: var(--nok-color); font-weight: 600; }
+  .count-pend { color: var(--pending-color); }
+  .progress-track {
+    height: 6px;
+    background: #1e2d47;
+    border-radius: 3px;
+    overflow: hidden;
+    display: flex;
+  }
+  .progress-ok { background: var(--ok-color); height: 100%; transition: width 0.3s; }
+  .progress-nok { background: var(--nok-color); height: 100%; transition: width 0.3s; }
+
+  /* MAIN CONTENT */
+  .main-content {
+    padding: 10px 10px 120px;
+  }
+  .sector-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 8px 0 12px;
+  }
+  .sector-badge {
+    background: var(--vw-light-blue);
+    color: #fff;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 20px;
+    padding: 4px 14px;
+    border-radius: 6px;
+    letter-spacing: 1px;
+  }
+  .sector-count {
+    font-size: 12px;
+    color: var(--text-secondary);
+  }
+
+  /* ITEM CARD */
+  .item-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    margin-bottom: 10px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .item-card.status-ok { border-left: 4px solid var(--ok-color); }
+  .item-card.status-nok { border-left: 4px solid var(--nok-color); }
+  .item-card.status-pending { border-left: 4px solid #1e2d47; }
+
+  .item-header {
+    padding: 10px 12px 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .item-number {
+    background: var(--card-border);
+    color: var(--text-secondary);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 12px;
+    padding: 2px 7px;
+    border-radius: 4px;
+    flex-shrink: 0;
+    margin-top: 2px;
+    letter-spacing: 0.5px;
+  }
+  .item-info { flex: 1; min-width: 0; }
+  .item-operacao {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--text-primary);
+    line-height: 1.3;
+    margin-bottom: 3px;
+  }
+  .item-descricao {
+    font-size: 12px;
+    color: var(--text-secondary);
+    line-height: 1.4;
+    margin-bottom: 4px;
+  }
+  .item-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+  .tag {
+    font-size: 9px;
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+  }
+  .tag-modelo { background: rgba(21,101,192,0.25); color: #64b5f6; }
+  .tag-regiao { background: rgba(100,100,100,0.2); color: #9eb8cc; }
+  .tag-tacto { background: rgba(21,101,192,0.15); color: #5c8bb0; }
+  .tag-time { background: rgba(0,200,83,0.12); color: #69c879; }
+
+  .item-status-indicator {
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    margin-top: 0;
+  }
+  .item-status-indicator.ok { background: rgba(0,200,83,0.15); }
+  .item-status-indicator.nok { background: rgba(213,0,0,0.15); }
+  .item-status-indicator.pending { background: rgba(120,144,156,0.1); }
+
+  /* ITEM BODY - Accordion */
+  .item-body {
+    border-top: 1px solid var(--card-border);
+    padding: 12px;
+    display: none;
+  }
+  .item-card.open .item-body { display: block; }
+  .item-card.open .item-header { background: rgba(255,255,255,0.02); }
+
+  /* DRAG HANDLE & SORTABLE */
+  .drag-handle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+    cursor: grab;
+    color: #2a3f5f;
+    font-size: 18px;
+    touch-action: none;
+    border-radius: 6px;
+    transition: color 0.15s, background 0.15s;
+    margin-top: 0;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+  .drag-handle:active { cursor: grabbing; color: var(--text-secondary); background: rgba(255,255,255,0.06); }
+  .sortable-ghost { opacity: 0.35; }
+  .sortable-drag { opacity: 0.95; box-shadow: 0 12px 40px rgba(0,0,0,0.7); }
+  .reorder-hint {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 10px;
+    color: #2a3f5f;
+    padding: 5px 10px;
+    margin-bottom: 6px;
+  }
+
+  /* OK / NOK BUTTONS */
+  .check-buttons {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .btn-check {
+    flex: 1;
+    padding: 12px 8px;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.15s;
+    background: #1e2d47;
+    color: var(--text-secondary);
+  }
+  .btn-check.ok-btn:hover, .btn-check.ok-btn.active {
+    background: rgba(0,200,83,0.15);
+    border-color: var(--ok-color);
+    color: var(--ok-color);
+  }
+  .btn-check.nok-btn:hover, .btn-check.nok-btn.active {
+    background: rgba(213,0,0,0.12);
+    border-color: var(--nok-color);
+    color: var(--nok-color);
+  }
+  .btn-check .btn-icon { font-size: 20px; display: block; margin-bottom: 2px; }
+
+  /* OBSERVATIONS */
+  .obs-label {
+    font-size: 11px;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+  .obs-textarea {
+    width: 100%;
+    background: #0d1526;
+    border: 1.5px solid var(--card-border);
+    border-radius: 7px;
+    color: var(--text-primary);
+    font-family: 'Barlow', sans-serif;
+    font-size: 16px;
+    padding: 10px;
+    resize: none;
+    min-height: 70px;
+    margin-bottom: 12px;
+    transition: border-color 0.2s;
+    -webkit-appearance: none;
+  }
+  .obs-textarea:focus { outline: none; border-color: var(--vw-light-blue); }
+  .obs-textarea::placeholder { color: #3a4f66; }
+
+  /* PHOTO */
+  .photo-section { margin-bottom: 10px; }
+  .photo-label {
+    font-size: 11px;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 6px;
+    font-weight: 600;
+    display: block;
+  }
+  .photo-upload-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #0d1526;
+    border: 1.5px dashed #2a3f5f;
+    border-radius: 7px;
+    padding: 10px 12px;
+    color: var(--text-secondary);
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .photo-upload-btn:hover { border-color: var(--vw-light-blue); color: var(--text-primary); }
+  .photo-upload-btn .upload-icon { font-size: 18px; }
+  input[type="file"] { display: none; }
+  .photo-preview {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+  }
+  .photo-thumb {
+    width: 64px;
+    height: 64px;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 2px solid var(--card-border);
+  }
+
+  /* REFERENCE LINK */
+  .ref-link {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: #4a90d9;
+    text-decoration: none;
+    padding: 6px 10px;
+    background: rgba(74,144,217,0.08);
+    border-radius: 5px;
+    margin-top: 6px;
+    border: 1px solid rgba(74,144,217,0.2);
+  }
+  .ref-link:hover { background: rgba(74,144,217,0.15); }
+  .ref-icon { font-size: 14px; }
+
+  /* FLOATING ACTION */
+  .floating-bottom {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(180deg, transparent 0%, var(--vw-dark) 30%);
+    padding: 16px 12px calc(env(safe-area-inset-bottom) + 18px);
+    padding-left: calc(env(safe-area-inset-left) + 12px);
+    padding-right: calc(env(safe-area-inset-right) + 12px);
+    z-index: 99;
+  }
+  .action-buttons {
+    display: flex;
+    gap: 8px;
+  }
+  .btn-action {
+    flex: 1;
+    padding: 13px 8px;
+    border: none;
+    border-radius: 10px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: all 0.15s;
+  }
+  .btn-pdf {
+    background: linear-gradient(135deg, #1a3a6e, #0040c1);
+    color: #fff;
+    box-shadow: 0 4px 15px rgba(0,64,193,0.3);
+  }
+  .btn-email {
+    background: linear-gradient(135deg, #1e2d47, #243552);
+    color: var(--text-primary);
+    border: 1.5px solid var(--card-border);
+  }
+  .btn-action:active { transform: scale(0.97); }
+  .btn-icon-lg { font-size: 16px; }
+
+  /* MODAL */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    z-index: 200;
+    align-items: flex-end;
+  }
+  .modal-overlay.active { display: flex; }
+  .modal-sheet {
+    background: #0d1526;
+    border-radius: 16px 16px 0 0;
+    padding: 20px 16px calc(env(safe-area-inset-bottom) + 28px);
+    width: 100%;
+    max-height: 88vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    border-top: 2px solid var(--vw-light-blue);
+  }
+  .modal-handle {
+    width: 36px;
+    height: 4px;
+    background: #2a3f5f;
+    border-radius: 2px;
+    margin: 0 auto 16px;
+  }
+  .modal-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 20px;
+    color: #fff;
+    margin-bottom: 16px;
+    letter-spacing: 0.5px;
+  }
+  .chart-container {
+    position: relative;
+    height: 220px;
+    margin-bottom: 16px;
+  }
+  .stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .stat-box {
+    background: var(--card-bg);
+    border-radius: 8px;
+    padding: 10px 8px;
+    text-align: center;
+    border: 1px solid var(--card-border);
+  }
+  .stat-value {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 26px;
+    line-height: 1;
+    margin-bottom: 3px;
+  }
+  .stat-label { font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; }
+  .stat-ok .stat-value { color: var(--ok-color); }
+  .stat-nok .stat-value { color: var(--nok-color); }
+  .stat-pend .stat-value { color: var(--pending-color); }
+  .modal-actions { display: flex; flex-direction: column; gap: 8px; }
+  .btn-modal-action {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 10px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .btn-modal-pdf {
+    background: linear-gradient(135deg, #1a3a6e, #0040c1);
+    color: #fff;
+    box-shadow: 0 4px 15px rgba(0,64,193,0.3);
+  }
+  .btn-modal-email {
+    background: var(--card-bg);
+    color: var(--text-primary);
+    border: 1.5px solid var(--card-border);
+  }
+  .btn-modal-close {
+    background: transparent;
+    color: var(--text-secondary);
+    border: 1.5px solid var(--card-border);
+  }
+
+  /* Print/PDF styles */
+  @media print {
+    body { background: #fff; color: #000; }
+    .app-header { position: relative; background: #001e50; }
+    .floating-bottom, .sector-nav, .modal-overlay { display: none !important; }
+    .item-body { display: block !important; }
+    .item-card { break-inside: avoid; border: 1px solid #ddd; margin-bottom: 8px; }
+    .obs-textarea { border: 1px solid #ccc; }
+    .btn-check { border: 2px solid #ccc; color: #333; background: #f5f5f5; }
+    .btn-check.ok-btn.active { border-color: #00c853; color: #00c853; }
+    .btn-check.nok-btn.active { border-color: #d50000; color: #d50000; }
+  }
+
+  /* SETTINGS MODAL */
+  .settings-modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.9);
+    z-index: 300;
+    align-items: flex-end;
+  }
+  .settings-modal-overlay.active { display: flex; }
+  .settings-sheet {
+    background: #0d1526;
+    border-radius: 16px 16px 0 0;
+    padding: 20px 16px calc(env(safe-area-inset-bottom) + 32px);
+    width: 100%;
+    max-height: 92vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    border-top: 2px solid #f59e0b;
+  }
+  .settings-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 19px;
+    color: #f59e0b;
+    margin-bottom: 4px;
+    letter-spacing: 0.5px;
+  }
+  .settings-subtitle {
+    font-size: 11px;
+    color: var(--text-secondary);
+    margin-bottom: 16px;
+    line-height: 1.5;
+  }
+  .settings-field {
+    margin-bottom: 12px;
+  }
+  .settings-field label {
+    display: block;
+    font-size: 10px;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 5px;
+    font-weight: 600;
+  }
+  .settings-input {
+    width: 100%;
+    background: #111827;
+    border: 1.5px solid var(--card-border);
+    border-radius: 7px;
+    color: var(--text-primary);
+    font-family: 'Barlow', sans-serif;
+    font-size: 16px;
+    padding: 10px 12px;
+    transition: border-color 0.2s;
+    -webkit-appearance: none;
+  }
+  .settings-input:focus { outline: none; border-color: #f59e0b; }
+  .settings-input::placeholder { color: #3a4f66; }
+  .settings-hint {
+    font-size: 10px;
+    color: #4a6380;
+    margin-top: 3px;
+    line-height: 1.4;
+  }
+  .settings-link {
+    color: #4a90d9;
+    text-decoration: underline;
+  }
+  .btn-settings-save {
+    width: 100%;
+    padding: 13px;
+    border: none;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #b45309, #f59e0b);
+    color: #fff;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    margin-top: 4px;
+  }
+  .btn-settings-close {
+    width: 100%;
+    padding: 11px;
+    border: 1.5px solid var(--card-border);
+    border-radius: 10px;
+    background: transparent;
+    color: var(--text-secondary);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    margin-top: 8px;
+  }
+  .config-status {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    padding: 7px 10px;
+    border-radius: 6px;
+    margin-bottom: 14px;
+  }
+  .config-status.ok { background: rgba(0,200,83,0.1); color: #00c853; border: 1px solid rgba(0,200,83,0.25); }
+  .config-status.not-ok { background: rgba(245,158,11,0.1); color: #f59e0b; border: 1px solid rgba(245,158,11,0.25); }
+  .btn-modal-settings {
+    background: rgba(245,158,11,0.08);
+    color: #f59e0b;
+    border: 1.5px solid rgba(245,158,11,0.3);
+  }
+  /* Sending overlay */
+  .send-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.88);
+    z-index: 400;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+  }
+  .send-overlay.active { display: flex; }
+  .send-spinner {
+    width: 48px;
+    height: 48px;
+    border: 4px solid rgba(255,255,255,0.15);
+    border-top-color: #0040c1;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  .send-status-text {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 17px;
+    color: #fff;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-align: center;
+  }
+  .send-status-sub {
+    font-size: 12px;
+    color: rgba(255,255,255,0.5);
+    text-align: center;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--text-secondary);
+  }
+  .empty-state-icon { font-size: 48px; margin-bottom: 12px; display: block; }
+  .loading-spinner {
+    display: flex;
+    justify-content: center;
+    padding: 30px;
+  }
+  .spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid var(--card-border);
+    border-top-color: var(--vw-light-blue);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="app-header">
+  <div class="header-top">
+    <div class="vw-logo">
+      <div class="vw-logo-circle">VW</div>
+      <div>
+        <div class="app-title">VCP Suporte Montagem</div>
+        <div class="app-subtitle">Checklist de Riscos · Braço: <span id="braco-display">—</span></div>
+      </div>
+    </div>
+    <div class="header-date">
+      <div class="date-value" id="header-date">—</div>
+      <div class="date-label">Data</div>
+    </div>
+  </div>
+</header>
+
+<!-- SECTOR NAV -->
+<div class="sector-nav">
+  <div class="sector-nav-label">Selecionar Setor</div>
+  <select class="sector-select" id="sector-select" onchange="loadSector(this.value)">
+    <option value="">— Escolha um setor —</option>
+    <option value="B1">B1</option>
+    <option value="B2">B2</option>
+    <option value="B3">B3</option>
+    <option value="B4">B4</option>
+    <option value="B5">B5</option>
+    <option value="Cockpit">Cockpit</option>
+    <option value="Doorless">Doorless</option>
+    <option value="Frontend">Frontend</option>
+    <option value="OK6">OK6</option>
+  </select>
+</div>
+
+<!-- PROGRESS -->
+<div class="progress-bar-wrap" id="progress-wrap" style="display:none">
+  <div class="progress-info">
+    <span id="progress-label">Progresso</span>
+    <div class="progress-counts">
+      <span class="count-ok">✓ <span id="p-ok">0</span> OK</span>
+      <span class="count-nok">✗ <span id="p-nok">0</span> NOK</span>
+      <span class="count-pend">⏸ <span id="p-pend">0</span> pend.</span>
+    </div>
+  </div>
+  <div class="progress-track">
+    <div class="progress-ok" id="prog-ok-bar" style="width:0%"></div>
+    <div class="progress-nok" id="prog-nok-bar" style="width:0%"></div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<main class="main-content" id="main-content">
+  <div class="empty-state">
+    <span class="empty-state-icon">🏭</span>
+    <div style="font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:600;color:#4a6380;margin-bottom:6px;">VCP Suporte Montagem</div>
+    <div style="font-size:13px;color:#3a4f66;">Selecione um setor para iniciar o checklist</div>
+  </div>
+</main>
+
+<!-- FLOATING BUTTONS -->
+<div class="floating-bottom">
+  <div class="action-buttons">
+    <button class="btn-action btn-pdf" onclick="openModal()">
+      <span class="btn-icon-lg">📊</span> Resultados & PDF
+    </button>
+    <button class="btn-action btn-email" onclick="openModal()">
+      <span class="btn-icon-lg">📧</span> Enviar
+    </button>
+  </div>
+</div>
+
+<!-- RESULTS MODAL -->
+<div class="modal-overlay" id="results-modal" onclick="closeModalOutside(event)">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">📊 Resultados</div>
+
+    <div class="stats-grid">
+      <div class="stat-box stat-ok">
+        <div class="stat-value" id="modal-ok">0</div>
+        <div class="stat-label">OK</div>
+      </div>
+      <div class="stat-box stat-nok">
+        <div class="stat-value" id="modal-nok">0</div>
+        <div class="stat-label">NOK</div>
+      </div>
+      <div class="stat-box stat-pend">
+        <div class="stat-value" id="modal-pend">0</div>
+        <div class="stat-label">Pend.</div>
+      </div>
+    </div>
+
+    <div class="chart-container">
+      <canvas id="results-chart"></canvas>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-modal-action btn-modal-pdf" onclick="generatePDF()">
+        <span>📄</span> Salvar como PDF
+      </button>
+      <button class="btn-modal-action btn-modal-email" onclick="sendEmail()">
+        <span>📧</span> Enviar por E-mail
+      </button>
+      <button class="btn-modal-action btn-modal-settings" onclick="openSettings()">
+        <span>⚙️</span> Config. E-mail
+      </button>
+      <button class="btn-modal-action btn-modal-close" onclick="closeModal()">
+        Fechar
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- SETTINGS MODAL -->
+<div class="settings-modal-overlay" id="settings-modal" onclick="closeSettingsOutside(event)">
+  <div class="settings-sheet">
+    <div class="modal-handle"></div>
+    <div class="settings-title">⚙️ Configuração de E-mail</div>
+    <div class="settings-subtitle">O envio é feito via Netlify Functions (SMTP). Configure as variáveis de ambiente no painel Netlify.</div>
+
+    <div id="config-status-box"></div>
+
+    <div class="settings-field">
+      <label>Destinatários (separados por vírgula)</label>
+      <input class="settings-input" id="cfg-recipients" type="email" autocomplete="email" placeholder="email1@vw.com, email2@vw.com" inputmode="email">
+    </div>
+
+    <div style="background:#0a0e1a;border-radius:8px;padding:12px;margin-bottom:14px;border:1px solid #1e2d47;">
+      <div style="font-size:11px;font-weight:700;color:#f59e0b;letter-spacing:0.5px;margin-bottom:8px;text-transform:uppercase;">⚙️ Variáveis no Netlify</div>
+      <div style="font-size:10px;color:#8899b0;line-height:1.9;font-family:monospace;background:#070b14;padding:10px;border-radius:6px;">
+        SMTP_HOST=smtp.gmail.com<br>
+        SMTP_PORT=587<br>
+        SMTP_USER=seu@gmail.com<br>
+        SMTP_PASS=sua_senha_de_app<br>
+        SMTP_FROM=VCP Montagem &lt;seu@gmail.com&gt;
+      </div>
+      <div style="font-size:10px;color:#4a6380;margin-top:6px;">Painel Netlify → Site → Site configuration → Environment variables</div>
+    </div>
+
+    <button class="btn-settings-save" onclick="saveEmailSettings()">💾 Salvar Destinatários</button>
+    <button class="btn-settings-close" onclick="closeSettings()">Fechar</button>
+  </div>
+</div>
+
+<!-- SENDING OVERLAY -->
+<div class="send-overlay" id="send-overlay">
+  <div class="send-spinner"></div>
+  <div class="send-status-text" id="send-status-text">Preparando e-mail...</div>
+  <div class="send-status-sub" id="send-status-sub">Aguarde</div>
+</div>
+
+<script>
+const CHECKLIST_DATA = {
+  "B1": [
+    {
+      "id": "1",
+      "time": "1",
+      "tacto": "1",
+      "operacao": "Soltar parafuso da dobradiça LD/LE",
+      "modelo": "Todos",
+      "descricao": "Proteção em nylon bico máquina",
+      "regiao": "Dobradiças Diant/Tras e Col.A e B LD"
+    },
+    {
+      "id": "2",
+      "time": "1",
+      "tacto": "1",
+      "operacao": "Recebimento de Carrocerias (Plataforma)",
+      "modelo": "Todos",
+      "descricao": "Riscos em geral provinientes da Pintura",
+      "regiao": "Geral"
+    },
+    {
+      "id": "3",
+      "time": "1",
+      "tacto": "7",
+      "operacao": "Carpelã soleira dianteira",
+      "modelo": "27X",
+      "descricao": "Verificar o uso das carpelãs pelo processo",
+      "regiao": "Soleira dianteira LD e LE"
+    },
+    {
+      "id": "5",
+      "time": "2",
+      "tacto": "7",
+      "operacao": "Apontamento Parafuso Batentes",
+      "modelo": "Saveiro",
+      "descricao": "Proteção em nylon bico máquina",
+      "regiao": "Coluna D LD/LE"
+    },
+    {
+      "id": "6",
+      "time": "1",
+      "tacto": "11",
+      "operacao": "Fixação Pedaleira (Embreagem)",
+      "modelo": "27X",
+      "descricao": "Proteção em nylon bico máquina",
+      "regiao": "Soleira dianteira LE e Col. A LE"
+    },
+    {
+      "id": "7",
+      "time": "2",
+      "tacto": "12",
+      "operacao": "Adesivos Logotipia",
+      "modelo": "Polo GTS",
+      "descricao": "Verificar  condição Dispositivo logotipo GTS",
+      "regiao": "Tampa Traseira"
+    },
+    {
+      "id": "9",
+      "time": "2",
+      "tacto": "12",
+      "operacao": "Adesivos Logotipia",
+      "modelo": "Nivus",
+      "descricao": "Verificar  condição Dispositivo logotipo NIVUS",
+      "regiao": "Tampa Traseira"
+    },
+    {
+      "id": "11",
+      "time": "2",
+      "tacto": "12",
+      "operacao": "Adesivos Logotipia",
+      "modelo": "Saveiro",
+      "descricao": "Verificar  condição Dispositivo logotipo ROBUST",
+      "regiao": "Tampa Traseira"
+    },
+    {
+      "id": "12",
+      "time": "2",
+      "tacto": "12",
+      "operacao": "Adesivos Logotipia",
+      "modelo": "Saveiro",
+      "descricao": "Verificar  condição Dispositivo FAIXA DECORATIVA",
+      "regiao": "Tampa Traseira"
+    },
+    {
+      "id": "13",
+      "time": "2",
+      "tacto": "12",
+      "operacao": "Adesivos Logotipia",
+      "modelo": "Saveiro",
+      "descricao": "Verificar  condição Dispositivo SAVEIRO",
+      "regiao": "Tampa Traseira"
+    },
+    {
+      "id": "14",
+      "time": "2",
+      "tacto": "12",
+      "operacao": "Adesivos Logotipia",
+      "modelo": "Nivus-Polo GTS",
+      "descricao": "Verificar  condição Dispositivo logotipo 200 TSI / 170 MSI",
+      "regiao": "Tampa Traseira"
+    },
+    {
+      "id": "15",
+      "time": "2",
+      "tacto": "13",
+      "operacao": "Soltar Alça da Tampa - Pintura",
+      "modelo": "Saveiro",
+      "descricao": "Verificar condição Dispositivo anti-riscos",
+      "regiao": "Lateral Tampa Traseira LD"
+    },
+    {
+      "id": "16",
+      "time": "2",
+      "tacto": "13",
+      "operacao": "Soltar Alça da Tampa - Pintura",
+      "modelo": "Saveiro",
+      "descricao": "Verificar se operador usa o dispositivo anti-riscos para soltar a Alça da Tampa traseira LD",
+      "regiao": "Lateral Tampa Traseira LD"
+    },
+    {
+      "id": "17",
+      "time": "2",
+      "tacto": "13",
+      "operacao": "Porca-rebite Placa e  Aerofólio",
+      "modelo": "Nivus",
+      "descricao": "Proteção Rebitadeira e Mangueiras",
+      "regiao": "Tampa Traseira"
+    },
+    {
+      "id": "19",
+      "time": "2",
+      "tacto": "13",
+      "operacao": "Fechadura da Fechadura lateral Tampa traseira",
+      "modelo": "Saveiro",
+      "descricao": "Proteção em nylon bico máquina",
+      "regiao": "Tampa Traseira Lateral (interno)"
+    },
+    {
+      "id": "20",
+      "time": "2",
+      "tacto": "13",
+      "operacao": "Fixação do Batente da Tampa Traseira",
+      "modelo": "Nivus",
+      "descricao": "Proteção em nylon bico máquina",
+      "regiao": "Tampa Traseira Lateral (interno)"
+    },
+    {
+      "id": "21",
+      "time": "2",
+      "tacto": "13",
+      "operacao": "Fixação do Batente da Carroceria",
+      "modelo": "Nivus",
+      "descricao": "Proteção em nylon bico máquina",
+      "regiao": "Tampa Traseira Lateral (interno)"
+    },
+    {
+      "id": "22",
+      "time": "2",
+      "tacto": "13",
+      "operacao": "Alça Tampa Traseira",
+      "modelo": "Saveiro",
+      "descricao": "Padronização dos Parafusos / Dispositivo quebrado",
+      "regiao": "Tampa Traseira"
+    },
+    {
+      "id": "23",
+      "time": "2",
+      "tacto": "13",
+      "operacao": "Soltar Alça da Tampa - Pintura",
+      "modelo": "Saveiro",
+      "descricao": "Proteção em nylon bico máquina angular",
+      "regiao": "Coluna D LD"
+    },
+    {
+      "id": "24",
+      "time": "2",
+      "tacto": "14",
+      "operacao": "Fixação Parafuso Batentes",
+      "modelo": "Saveiro",
+      "descricao": "Verificar condição Dispositivo Pré-ajuste Batentes Tampa Traseira LD/LE",
+      "regiao": "Coluna D LD/LE"
+    },
+    {
+      "id": "26",
+      "time": "2",
+      "tacto": "14",
+      "operacao": "Fixação Parafuso Batentes",
+      "modelo": "Saveiro",
+      "descricao": "Proteção em nylon bico máquina",
+      "regiao": "Coluna D LD/LE"
+    },
+    {
+      "id": "27",
+      "time": "2",
+      "tacto": "14",
+      "operacao": "Fixação Amortecedores Tampa Traseira",
+      "modelo": "Polo GTS",
+      "descricao": "Proteção em nylon bico máquina",
+      "regiao": "Lateral Int.Tampa Traseira"
+    },
+    {
+      "id": "29",
+      "time": "2",
+      "tacto": "15",
+      "operacao": "Montagem da Emblema/Fechadura da Tampa Traseira",
+      "modelo": "Saveiro",
+      "descricao": "Proteção em nylon bico máquina",
+      "regiao": "Tampa Traseira (amassado interno)"
+    },
+    {
+      "id": "30",
+      "time": "2",
+      "tacto": "15",
+      "operacao": "Montagem da Emblema/Fechadura da Tampa Traseira",
+      "modelo": "Saveiro",
+      "descricao": "Verificar condição do dispositivo Emblema/Fechadura da Tampa Traseira",
+      "regiao": "Tampa Traseira"
+    },
+    {
+      "id": "31",
+      "time": "2",
+      "tacto": "16",
+      "operacao": "Montagem Galão Portas LD",
+      "modelo": "Saveiro",
+      "descricao": "Proteção Rollforming",
+      "regiao": "Vão de Portas"
+    },
+    {
+      "id": "32",
+      "time": "2",
+      "tacto": "16",
+      "operacao": "Fixação Fechadura Tampa Dianteira LD/LE",
+      "modelo": "27X",
+      "descricao": "Proteção em nylon bico máquina",
+      "regiao": "Tampa Dianteira interno"
+    },
+    {
+      "id": "33",
+      "time": "2",
+      "tacto": "17",
+      "operacao": "Montagem Galão Portas LE",
+      "modelo": "Saveiro",
+      "descricao": "Proteção Rollforming",
+      "regiao": "Vão de Portas"
+    },
+    {
+      "id": "34",
+      "time": "2",
+      "tacto": "18",
+      "operacao": "Montagem Galão",
+      "modelo": "Saveiro",
+      "descricao": "Proteção Rollforming Vidro Lateral LD/LE",
+      "regiao": "Vão de Portas / Col. B"
+    },
+    {
+      "id": "35",
+      "time": "4",
+      "tacto": "18",
+      "operacao": "Montagem Galão",
+      "modelo": "Nivus-Polo GTS",
+      "descricao": "Proteção Multforming Tampa Traseira",
+      "regiao": "Tampa Traseira"
+    },
+    {
+      "id": "37",
+      "time": "3",
+      "tacto": "19",
+      "operacao": "Manipulador LE Fixação Coxim do Câmbio",
+      "modelo": "Todos",
+      "descricao": "Proteção em nylon bico do manipulador",
+      "regiao": "Paralama Diant. LE"
+    },
+    {
+      "id": "38",
+      "time": "3",
+      "tacto": "19",
+      "operacao": "Manipulador LE Fixação Coxim do Câmbio",
+      "modelo": "Todos",
+      "descricao": "Verificar Proteção Manipulador/ Máquina \n(Colisão com veículo)",
+      "regiao": "Paralama Diant. LE"
+    },
+    {
+      "id": "39",
+      "time": "4",
+      "tacto": "20",
+      "operacao": "Montagem Vidro Lateral",
+      "modelo": "Saveiro",
+      "descricao": "Verificar Proteção/hóstias Dispositivo Vidro lateral Saveiro DC LD/LE",
+      "regiao": "Col.C e Painel Lateral"
+    },
+    {
+      "id": "40",
+      "time": "4",
+      "tacto": "20",
+      "operacao": "Montagem Vidro Lateral",
+      "modelo": "Saveiro",
+      "descricao": "Verificar Proteção mesa de apoio LD/LE",
+      "regiao": "Vidro Lateral /Dispositivo"
+    },
+    {
+      "id": "41",
+      "time": "4",
+      "tacto": "20",
+      "operacao": "Montagem Fechadura Dianteira",
+      "modelo": "Saveiro",
+      "descricao": "Verificar condição do dispositivo fechadura dianteira",
+      "regiao": "Painel Frontal"
+    },
+    {
+      "id": "42",
+      "time": "4",
+      "tacto": "21",
+      "operacao": "Fixação Fechadura Tampa Dianteira",
+      "modelo": "Saveiro",
+      "descricao": "Proteção em nylon bico máquina",
+      "regiao": "Tampa Dianteira interno"
+    },
+    {
+      "id": "43",
+      "time": "4",
+      "tacto": "21",
+      "operacao": "Fixação Air-bag Cortina",
+      "modelo": "27X",
+      "descricao": "Proteção em nylon bico máquina",
+      "regiao": "Col. B/ C e Painel Lateral"
+    },
+    {
+      "id": "44",
+      "time": "4",
+      "tacto": "22",
+      "operacao": "Porca-rebite Caçamba",
+      "modelo": "Saveiro",
+      "descricao": "Proteção Rebitadeira e Mangueiras",
+      "regiao": "Painel Lateral LD/LE e Tampa Traseira"
+    },
+    {
+      "id": "45",
+      "time": "3",
+      "tacto": "24",
+      "operacao": "Pré-ajuste Tampa Dianteira",
+      "modelo": "Todos",
+      "descricao": "Dispositivos de Pré-ajuste Tampa Dianteira",
+      "regiao": "Tampa Dianteira interno"
+    },
+    {
+      "id": "46",
+      "time": "3",
+      "tacto": "24",
+      "operacao": "Ajuste Batente Tampa Traseira",
+      "modelo": "Nivus-Polo GTS",
+      "descricao": "Dispositivo da NASA",
+      "regiao": "Tampa Traseira e Capa da Fechadura"
+    },
+    {
+      "id": "47",
+      "time": "3",
+      "tacto": "24",
+      "operacao": "Pré-ajuste Tampa Traseira",
+      "modelo": "Todos",
+      "descricao": "Ferramentas de Pré-ajuste Tampa Traseira",
+      "regiao": "Tampa Traseira"
+    },
+    {
+      "id": "48",
+      "time": "3",
+      "tacto": "24",
+      "operacao": "Pré-ajuste Tampa Dianteira",
+      "modelo": "Todos",
+      "descricao": "Ferramentas de Pré-ajuste Tampa Dianteira",
+      "regiao": "Tampa Dianteira interno"
+    },
+    {
+      "id": "49",
+      "time": "4",
+      "tacto": "24",
+      "operacao": "Fixação Pedaleira (Servo-freio)",
+      "modelo": "27X",
+      "descricao": "Verificar Banquinho auxiliar e Proteções",
+      "regiao": "Soleira Dianteira LE"
+    },
+    {
+      "id": "50",
+      "time": "4",
+      "tacto": "24",
+      "operacao": "Fixação Pedaleira (Servo-freio)",
+      "modelo": "27X",
+      "descricao": "Proteção em nylon bico máquina",
+      "regiao": "Soleira Dianteira LE"
+    },
+    {
+      "id": "51",
+      "time": "4",
+      "tacto": "25",
+      "operacao": "Batente Tpa Diant Nivus e Guia do Painel 27X",
+      "modelo": "27X",
+      "descricao": "Proteção em nylon bico máquina",
+      "regiao": "Coluna A LE"
+    },
+    {
+      "id": "52",
+      "time": "4",
+      "tacto": "26",
+      "operacao": "Fixação Suporte da BCM",
+      "modelo": "Saveiro",
+      "descricao": "Proteção em nylon bico máquina",
+      "regiao": "Caixa de Ar LE (Soleira)"
+    },
+    {
+      "id": "53",
+      "time": "5",
+      "tacto": "27",
+      "operacao": "Manipulador Montagem Cockpit",
+      "modelo": "Saveiro",
+      "descricao": "Verificar Proteção Manipulador",
+      "regiao": "Casca Painel / Col. A e B"
+    },
+    {
+      "id": "54",
+      "time": "5",
+      "tacto": "28",
+      "operacao": "Manipulalor Montagem Cockpit",
+      "modelo": "27X",
+      "descricao": "Verificar Proteção Manipulador",
+      "regiao": "Casca Painel / Col. A e B"
+    },
+    {
+      "id": "55",
+      "time": "5",
+      "tacto": "29",
+      "operacao": "Fixação da Gradinha protetora da coifa",
+      "modelo": "Todos",
+      "descricao": "Proteção em nylon bico máquina",
+      "regiao": "Painel Lateral LE"
+    },
+    {
+      "id": "56",
+      "time": "5",
+      "tacto": "30",
+      "operacao": "Fixação Cockpit + Centralização Painel",
+      "modelo": "27X",
+      "descricao": "Verificar Proteção Cabeçote da Máquina LD/LE",
+      "regiao": "Coluna A/ Soleira/Lateral do Painel  LD/LE"
+    },
+    {
+      "id": "57",
+      "time": "5",
+      "tacto": "30",
+      "operacao": "Centralização Painel",
+      "modelo": "Saveiro",
+      "descricao": "Proteção em nylon bico máquina",
+      "regiao": "Caixa de Ar LD/LE"
+    },
+    {
+      "id": "58",
+      "time": "5",
+      "tacto": "30",
+      "operacao": "Soltar porca do cabo massa",
+      "modelo": "27X",
+      "descricao": "Verificar Proteção Cabeçote da Máquina",
+      "regiao": "Coluna A LD/LE"
+    },
+    {
+      "id": "59",
+      "time": "4",
+      "tacto": "31",
+      "operacao": "Elevador Cockpit",
+      "modelo": "Saveiro",
+      "descricao": "Verificar evidência - Casca do painel caiu no sistema GOES? ( OK = NÃO / NOK = SIM )",
+      "regiao": "Casca Painel"
+    },
+    {
+      "id": "60",
+      "time": "1",
+      "tacto": "10-11",
+      "operacao": "Fixação Módulo Airbag",
+      "modelo": "27X",
+      "descricao": "Proteção em nylon bico máquina",
+      "regiao": "Soleira dianteira LE e Col. A LE"
+    },
+    {
+      "id": "61",
+      "time": "2",
+      "tacto": "13",
+      "operacao": "Montagem Cabo de aço Tampa Traseira",
+      "modelo": "Saveiro",
+      "descricao": "Proteção em nylon bico máquina",
+      "regiao": "Tampa Traseira Lateral (interno)"
+    },
+    {
+      "id": "62",
+      "time": "2",
+      "tacto": "13-14",
+      "operacao": "Fixação módulo LD",
+      "modelo": "Saveiro",
+      "descricao": "Proteção em nylon bico máquina",
+      "regiao": "Soleira LD"
+    },
+    {
+      "id": "63",
+      "time": "2",
+      "tacto": "18",
+      "operacao": "Montagem Galão Portas traseiras",
+      "modelo": "27X",
+      "descricao": "Proteção Rollforming",
+      "regiao": "Vão de Portas"
+    },
+    {
+      "id": "64",
+      "time": "3",
+      "tacto": "19",
+      "operacao": "Montagem Coxim do Câmbio",
+      "modelo": "Todos",
+      "descricao": "Proteção em nylon bico máquina (apontamento)",
+      "regiao": "Paralama Diant. LE"
+    },
+    {
+      "id": "65",
+      "time": "4",
+      "tacto": "21",
+      "operacao": "Fechadura Tampa traseira",
+      "modelo": "Nivus-Virtus",
+      "descricao": "Proteção em nylon bico máquina",
+      "regiao": "Interno Tampa traseira"
+    },
+    {
+      "id": "66",
+      "time": "1",
+      "tacto": "3 - 5",
+      "operacao": "Soltar Portas \"Duras\"  LE/LD",
+      "modelo": "Todos",
+      "descricao": "Uso  de ferramenta auxiliar",
+      "regiao": "Dobradiças Diant/Tras LE"
+    },
+    {
+      "id": "67",
+      "time": "1",
+      "tacto": "3 - 5",
+      "operacao": "Retirada de Portas LD/LE",
+      "modelo": "Todos",
+      "descricao": "Verificar condição da proteção \"Gravatinha\" LD/LE",
+      "regiao": "Inferior Porta LD e LE"
+    },
+    {
+      "id": "68",
+      "time": "1",
+      "tacto": "3 - 5",
+      "operacao": "Retirada de Portas LD/LE",
+      "modelo": "Todos",
+      "descricao": "Verificar se operador usa proteção \"Gravatinha\" LD/LE",
+      "regiao": "Inferior Porta LD e LE"
+    },
+    {
+      "id": "69",
+      "time": "5",
+      "tacto": "30",
+      "operacao": "Fixação Cockpit",
+      "modelo": "27X",
+      "descricao": "Proteção em nylon bico máquina",
+      "regiao": "Coluna A/ Soleira/Lateral do Painel  LD/LE"
+    },
+    {
+      "id": "70",
+      "time": "5",
+      "tacto": "30",
+      "operacao": "Fixação Cockpit",
+      "modelo": "Saveiro",
+      "descricao": "Proteção em nylon bico máquina",
+      "regiao": "Coluna A/ Soleira/Lateral do Painel  LD/LE"
+    }
+  ],
+  "B2": [
+    {
+      "id": "71",
+      "time": "2",
+      "tacto": "35",
+      "operacao": "Fixação  Lateral Cockpit",
+      "modelo": "Saveiro",
+      "descricao": "Proteção em nylon bico máquina",
+      "regiao": "Casca do Painel e Col. A"
+    },
+    {
+      "id": "72",
+      "time": "2",
+      "tacto": "36",
+      "operacao": "Fixação Túnel Cockpit LE + Dash",
+      "modelo": "27X",
+      "descricao": "Proteção em nylon bico máquina",
+      "regiao": "Paralama LE"
+    },
+    {
+      "id": "73",
+      "time": "3",
+      "tacto": "38",
+      "operacao": "Montagem Teto",
+      "modelo": "Todos",
+      "descricao": "Verificar Banquinho auxiliar e Proteções (7 Unid.)",
+      "regiao": "Soleira Dianteira / Col. B e C"
+    },
+    {
+      "id": "75",
+      "time": "3",
+      "tacto": "38",
+      "operacao": "Fixação Parasol",
+      "modelo": "Saveiro",
+      "descricao": "Proteção em nylon bico máquina LD",
+      "regiao": "Painel"
+    },
+    {
+      "id": "76",
+      "time": "3",
+      "tacto": "38",
+      "operacao": "Fixação Porta-óculos",
+      "modelo": "27X",
+      "descricao": "Proteção em nylon bico máquina",
+      "regiao": "Painel"
+    },
+    {
+      "id": "77",
+      "time": "5",
+      "tacto": "41",
+      "operacao": "Fix .Túnel Cockpit + Módulo Abs Longarina",
+      "modelo": "27X-Saveiro",
+      "descricao": "Proteção em nylon bico máquina",
+      "regiao": "Coluna C \nParalama LE"
+    },
+    {
+      "id": "81",
+      "time": "5",
+      "tacto": "43",
+      "operacao": "Retirada Batente Plástico Pintura LD",
+      "modelo": "Todos",
+      "descricao": "Proteção em nylon bico máquina (soquete sextavado)",
+      "regiao": "Coluna B e C"
+    },
+    {
+      "id": "82",
+      "time": "5",
+      "tacto": "43",
+      "operacao": "Fixação Batentes Portas LD",
+      "modelo": "Todos",
+      "descricao": "Proteção em nylon bico máquina",
+      "regiao": "Coluna B e C"
+    },
+    {
+      "id": "83",
+      "time": "4",
+      "tacto": "44",
+      "operacao": "Fixação Coxim do Motor (Manipulador LD)",
+      "modelo": "",
+      "descricao": "Verificar Proteção Manipulador",
+      "regiao": "Paralama LD"
+    },
+    {
+      "id": "84",
+      "time": "4",
+      "tacto": "44",
+      "operacao": "Fixação Coxim do Motor (Manipulador LD)",
+      "modelo": "",
+      "descricao": "Proteção em nylon bico manipulador",
+      "regiao": "Paralama LD"
+    },
+    {
+      "id": "85",
+      "time": "4",
+      "tacto": "45",
+      "operacao": "Fixação Cabo Massa Bateria",
+      "modelo": "Todos",
+      "descricao": "Proteção em nylon bico máquina",
+      "regiao": "Paralama LE"
+    },
+    {
+      "id": "86",
+      "time": "5",
+      "tacto": "46",
+      "operacao": "Retirada Batente Plástico Pintura LE",
+      "modelo": "Todos",
+      "descricao": "Proteção em nylon bico máquina (soquete sextavado)",
+      "regiao": "Coluna B e C"
+    },
+    {
+      "id": "87",
+      "time": "5",
+      "tacto": "46",
+      "operacao": "Chave de Seta",
+      "modelo": "Todos",
+      "descricao": "Verificar Proteção Dispositivo",
+      "regiao": "Painel"
+    },
+    {
+      "id": "88",
+      "time": "5",
+      "tacto": "46",
+      "operacao": "Apontamento do Cinto",
+      "modelo": "Todos",
+      "descricao": "Verificar Banquinho auxiliar e Proteções (4 Unid.)",
+      "regiao": "Soleira Dianteira / Col. B e C"
+    },
+    {
+      "id": "89",
+      "time": "5",
+      "tacto": "46",
+      "operacao": "IBN1 (Fazit)",
+      "modelo": "Todos",
+      "descricao": "Verificar Proteções das MPS e Proteção Bico dos Alicates",
+      "regiao": "Soleira LE (Saveiro)"
+    },
+    {
+      "id": "90",
+      "time": "5",
+      "tacto": "46",
+      "operacao": "Fixação Batentes Portas LE",
+      "modelo": "Todos",
+      "descricao": "Proteção em nylon bico máquina (2 unidades)",
+      "regiao": "Coluna B e C"
+    },
+    {
+      "id": "91",
+      "time": "5",
+      "tacto": "47",
+      "operacao": "Fixação Guia do Cinto",
+      "modelo": "Saveiro",
+      "descricao": "Proteção em nylon bico máquina",
+      "regiao": "Coluna B LD/LE"
+    },
+    {
+      "id": "92",
+      "time": "5",
+      "tacto": "48",
+      "operacao": "Montagem do Aplique da Lanterna",
+      "modelo": "Virtus",
+      "descricao": "Verificar Proteção Dispositivo LD/LE",
+      "regiao": "Tampa Traseira"
+    },
+    {
+      "id": "97",
+      "time": "5",
+      "tacto": "49",
+      "operacao": "Fixação Cinto Central",
+      "modelo": "Saveiro DC",
+      "descricao": "Proteção em nylon bico máquina",
+      "regiao": "Paralama e Col. B LD"
+    },
+    {
+      "id": "98",
+      "time": "5",
+      "tacto": "50",
+      "operacao": "Fixação Motor Limpador",
+      "modelo": "Saveiro",
+      "descricao": "Proteção em nylon bico máquina",
+      "regiao": "Paralama LE"
+    },
+    {
+      "id": "99",
+      "time": "5",
+      "tacto": "50",
+      "operacao": "Fixação Motor Limpador",
+      "modelo": "Nivus-Virtus",
+      "descricao": "Proteção em nylon bico máquina",
+      "regiao": "Paralama LE"
+    },
+    {
+      "id": "100",
+      "time": "5",
+      "tacto": "50",
+      "operacao": "Fixação Motor  Ruído",
+      "modelo": "Polo GTS",
+      "descricao": "Proteção em nylon bico máquina",
+      "regiao": "Paralama LE"
+    },
+    {
+      "id": "101",
+      "time": "5",
+      "tacto": "50",
+      "operacao": "Fixação Guarda-pó",
+      "modelo": "Saveiro",
+      "descricao": "Proteção em nylon bico máquina",
+      "regiao": "Paralama LE"
+    },
+    {
+      "id": "102",
+      "time": "5",
+      "tacto": "51",
+      "operacao": "Fixação Cinto Dianteiro",
+      "modelo": "Saveiro",
+      "descricao": "Proteção em nylon bico máquina",
+      "regiao": "Paralama e Col. B LD/LE"
+    },
+    {
+      "id": "103",
+      "time": "5",
+      "tacto": "51",
+      "operacao": "Fixação Cinto Dianteiro",
+      "modelo": "27X",
+      "descricao": "Proteção em nylon bico máquina",
+      "regiao": "Paralama e Col. B LD/LE"
+    },
+    {
+      "id": "104",
+      "time": "5",
+      "tacto": "52",
+      "operacao": "Fixação Alavanca Freio de mão",
+      "modelo": "Todos",
+      "descricao": "Proteção em nylon bico máquina",
+      "regiao": "Alavanca Freio de mão"
+    },
+    {
+      "id": "107",
+      "time": "5",
+      "tacto": "52",
+      "operacao": "Montagem freio de mão",
+      "modelo": "Todos",
+      "descricao": "Verificar disposição das peças na Carroceria - (Operador não deve colocar a peça sobre rack ou no assoalho sem anti-ruído)",
+      "regiao": "Alavanca Freio de mão"
+    },
+    {
+      "id": "108",
+      "time": "5",
+      "tacto": "52",
+      "operacao": "Fixação Alavanca Freio de mão",
+      "modelo": "Todos",
+      "descricao": "Verificar proteções cabeçote máquina",
+      "regiao": "Alavanca Freio de mão"
+    },
+    {
+      "id": "109",
+      "time": "5",
+      "tacto": "55",
+      "operacao": "Fixação Coxim do Câmbio (Manipulador LE)",
+      "modelo": "Saveiro",
+      "descricao": "Proteção em nylon bico manipulador",
+      "regiao": "Paralama LE"
+    },
+    {
+      "id": "110",
+      "time": "5",
+      "tacto": "55",
+      "operacao": "Fixação Coxim do Câmbio (Manipulador LE)",
+      "modelo": "Saveiro",
+      "descricao": "Verificar Proteção Manipulador",
+      "regiao": "Paralama LE"
+    },
+    {
+      "id": "111",
+      "time": "6",
+      "tacto": "57",
+      "operacao": "Fixação Complemento",
+      "modelo": "Saveiro",
+      "descricao": "Proteção em nylon bico máquina",
+      "regiao": "Paralama LE"
+    },
+    {
+      "id": "112",
+      "time": "5",
+      "tacto": "59",
+      "operacao": "Montagem Lanterna",
+      "modelo": "Saveiro",
+      "descricao": "Proteção em nylon bico máquina ou bico imantado",
+      "regiao": "Coluna D LD/LE"
+    },
+    {
+      "id": "113",
+      "time": "5",
+      "tacto": "59",
+      "operacao": "Montagem Lanterna",
+      "modelo": "Polo GTS",
+      "descricao": "Verificar Proteção Dispositivo LD/LE",
+      "regiao": "Tampa Traseira"
+    },
+    {
+      "id": "114",
+      "time": "4",
+      "tacto": "35E",
+      "operacao": "Fixação Cabo Massa Soleira + Vão Motor",
+      "modelo": "Virtus-Polo GTS",
+      "descricao": "Proteção em nylon bico máquina",
+      "regiao": "Paralama LE"
+    }
+  ],
+  "B3": [
+    {
+      "id": "115",
+      "time": "2",
+      "tacto": "63",
+      "operacao": "Montagem Vidro Vigia",
+      "modelo": "Virtus",
+      "descricao": "Verificar Dispositivo + Limpeza + Películas de proteção",
+      "regiao": "Tampa Traseira"
+    },
+    {
+      "id": "116",
+      "time": "2",
+      "tacto": "63",
+      "operacao": "Montagem Vidro Vigia",
+      "modelo": "Nivus",
+      "descricao": "Verificar Dispositivo + Limpeza + Películas de proteção",
+      "regiao": "Tampa Traseira"
+    },
+    {
+      "id": "117",
+      "time": "2",
+      "tacto": "63",
+      "operacao": "Montagem Vidro Parabrisa",
+      "modelo": "27X",
+      "descricao": "Verificar Dispositivo + Limpeza + Películas de proteção",
+      "regiao": "Col. A / Teto"
+    },
+    {
+      "id": "118",
+      "time": "2",
+      "tacto": "63",
+      "operacao": "Montagem Vidro Parabrisa",
+      "modelo": "Saveiro",
+      "descricao": "Verificar Dispositivo + Limpeza + Películas de proteção",
+      "regiao": "Col. A / Teto"
+    },
+    {
+      "id": "119",
+      "time": "2",
+      "tacto": "63",
+      "operacao": "Montagem Vidro Vigia",
+      "modelo": "Polo GTS",
+      "descricao": "Verificar Dispositivo de abertura de tampa",
+      "regiao": "Tampa Traseira"
+    },
+    {
+      "id": "125",
+      "time": "3",
+      "tacto": "67",
+      "operacao": "Montagem da  Seletora",
+      "modelo": "27X",
+      "descricao": "Proteção em nylon bico máquina",
+      "regiao": "Soleira Dianteira e Col. A"
+    },
+    {
+      "id": "126",
+      "time": "3",
+      "tacto": "68",
+      "operacao": "Montagem da Coluna de Direção",
+      "modelo": "Todos",
+      "descricao": "Proteção em nylon bico máquina",
+      "regiao": "Soleira e Col. A"
+    },
+    {
+      "id": "128",
+      "time": "3",
+      "tacto": "69",
+      "operacao": "Montagem Sensor de Portas",
+      "modelo": "Saveiro",
+      "descricao": "Proteção em nylon bico máquina",
+      "regiao": "Coluna A LD/LE"
+    },
+    {
+      "id": "132",
+      "time": "3",
+      "tacto": "71",
+      "operacao": "Fixação Batente Portas",
+      "modelo": "Saveiro",
+      "descricao": "Proteção em nylon bico máquina",
+      "regiao": "Coluna B LD/LE"
+    },
+    {
+      "id": "133",
+      "time": "3",
+      "tacto": "72",
+      "operacao": "Montagem Vidro Fixo",
+      "modelo": "Polo GTS",
+      "descricao": "Verificar Dispositivo",
+      "regiao": "Coluna C e Painel Lateral LD/LE"
+    },
+    {
+      "id": "134",
+      "time": "3",
+      "tacto": "72",
+      "operacao": "Montagem Vidro Fixo",
+      "modelo": "Nivus",
+      "descricao": "Verificar Dispositivo",
+      "regiao": "Coluna C e Painel Lateral LD/LE"
+    },
+    {
+      "id": "135",
+      "time": "3",
+      "tacto": "72",
+      "operacao": "Montagem Vidro Fixo",
+      "modelo": "Virtus",
+      "descricao": "Verificar Dispositivo + Limpeza + Películas de proteção",
+      "regiao": "Coluna C e Painel Lateral LD/LE"
+    },
+    {
+      "id": "136",
+      "time": "1",
+      "tacto": "OP20",
+      "operacao": "Fixação do Coxim Motor (LD)",
+      "modelo": "Saveiro",
+      "descricao": "Proteção em nylon bico máquina",
+      "regiao": "Paralama LD"
+    },
+    {
+      "id": "137",
+      "time": "1",
+      "tacto": "OP20",
+      "operacao": "Fixação do Coxim Motor (LD)",
+      "modelo": "27X",
+      "descricao": "Proteção em nylon bico máquina",
+      "regiao": "Paralama LE"
+    },
+    {
+      "id": "138",
+      "time": "1",
+      "tacto": "OP20",
+      "operacao": "Fixação do Coxim Câmbio",
+      "modelo": "Todos",
+      "descricao": "Proteção em nylon bico máquina",
+      "regiao": "PARALAMA"
+    },
+    {
+      "id": "139",
+      "time": "1",
+      "tacto": "OP20",
+      "operacao": "Fixação Torre Amortecedor",
+      "modelo": "Todos",
+      "descricao": "Proteção em nylon bico máquina",
+      "regiao": "Paralama LD/LE"
+    },
+    {
+      "id": "140",
+      "time": "1",
+      "tacto": "",
+      "operacao": "Fixação do Amortecedor",
+      "modelo": "Todos",
+      "descricao": "Verificar Proteção da Máquina/Manipulador",
+      "regiao": "Painel Lateral"
+    }
+  ],
+  "B4": [
+    {
+      "id": "141",
+      "time": "1",
+      "tacto": "79",
+      "operacao": "Fixação Revestimento Tampa Traseira",
+      "modelo": "Saveiro",
+      "descricao": "Bico imantado ou proteção de nylon com ímã",
+      "regiao": "Revestimento Tampa Traseira"
+    },
+    {
+      "id": "143",
+      "time": "2",
+      "tacto": "80",
+      "operacao": "Montagem Luz de Cortesia",
+      "modelo": "Todos",
+      "descricao": "Verificar condição do Raku-Raku",
+      "regiao": "Revestimento Soleira Dianteira LE"
+    },
+    {
+      "id": "144",
+      "time": "2",
+      "tacto": "80",
+      "operacao": "Prateleira / Transbordo / Dolly / \nCarrinho Sequenciamento",
+      "modelo": "27X",
+      "descricao": "Verificar qtde de peças no carrinho - Revestimento interno Tampa Traseira (Máx.2 peças por colméia)",
+      "regiao": "Revestimento interno Tampa Traseira"
+    },
+    {
+      "id": "145",
+      "time": "2",
+      "tacto": "80",
+      "operacao": "Revestimento Tampa traseira",
+      "modelo": "27X",
+      "descricao": "Verificar a disposição da peça dentro da carroceria",
+      "regiao": "Revestimento interno Tampa Traseira"
+    },
+    {
+      "id": "146",
+      "time": "2",
+      "tacto": "80",
+      "operacao": "Fix. Motor limpador traseiro",
+      "modelo": "Nivus",
+      "descricao": "Proteção em nylon bico máquina",
+      "regiao": "Interno Tampa traseira"
+    },
+    {
+      "id": "148",
+      "time": "2",
+      "tacto": "82",
+      "operacao": "Montagem Bateria",
+      "modelo": "Todos",
+      "descricao": "Verificar Proteção nas regiões de possível contato do Manipulador da Bateria com a Carroceria",
+      "regiao": "Painel Frontal"
+    },
+    {
+      "id": "149",
+      "time": "2",
+      "tacto": "82",
+      "operacao": "Montagem do Grippmolding",
+      "modelo": "Nivus",
+      "descricao": "Verificar condição Dispositivo Grippmolding",
+      "regiao": "Tampa Traseira e Grippmolding"
+    },
+    {
+      "id": "150",
+      "time": "2",
+      "tacto": "82",
+      "operacao": "Fixação do Grippmolding",
+      "modelo": "Nivus",
+      "descricao": "Proteção em nylon bico máquina",
+      "regiao": "Tampa Traseira e Grippmolding"
+    },
+    {
+      "id": "151",
+      "time": "2",
+      "tacto": "82",
+      "operacao": "Prateleira / Transbordo / Dolly / \nCarrinho Sequenciamento",
+      "modelo": "Nivus",
+      "descricao": "Verificar Condição e Proteções",
+      "regiao": "Grippmolding"
+    },
+    {
+      "id": "152",
+      "time": "2",
+      "tacto": "82",
+      "operacao": "Console da bateria",
+      "modelo": "27X",
+      "descricao": "Proteção em nylon bico máquina",
+      "regiao": "Paralama"
+    },
+    {
+      "id": "153",
+      "time": "2",
+      "tacto": "82",
+      "operacao": "Console da bateria sobre coxim câmbio",
+      "modelo": "Saveiro",
+      "descricao": "Proteção em nylon bico máquina",
+      "regiao": "Paralama"
+    },
+    {
+      "id": "154",
+      "time": "2",
+      "tacto": "83",
+      "operacao": "Fixação da Bateria no console",
+      "modelo": "Saveiro",
+      "descricao": "Proteção em nylon bico máquina",
+      "regiao": "Painel Frontal"
+    },
+    {
+      "id": "155",
+      "time": "2",
+      "tacto": "83",
+      "operacao": "Apontar cabo massa da bateria",
+      "modelo": "Saveiro",
+      "descricao": "Proteção em nylon bico máquina",
+      "regiao": "Painel Frontal"
+    },
+    {
+      "id": "158",
+      "time": "2",
+      "tacto": "84",
+      "operacao": "Fixação do Revestimento da Coluna C Inferior",
+      "modelo": "27X",
+      "descricao": "Proteção em nylon bico máquina",
+      "regiao": "Revestimento Col.C inferior"
+    },
+    {
+      "id": "159",
+      "time": "2",
+      "tacto": "84",
+      "operacao": "Fixação Revestimento Tampa Traseira",
+      "modelo": "27X",
+      "descricao": "Verificar bico imantado e Proteção em nylon \n (2 máquinas)",
+      "regiao": "Revestimento Tampa Traseira"
+    },
+    {
+      "id": "160",
+      "time": "2",
+      "tacto": "85",
+      "operacao": "Fixação Grade do Vigia",
+      "modelo": "Saveiro",
+      "descricao": "Proteção em nylon bico máquina",
+      "regiao": "Grade Vigia"
+    },
+    {
+      "id": "161",
+      "time": "2",
+      "tacto": "85",
+      "operacao": "Montagem Grade do Vigia",
+      "modelo": "Saveiro",
+      "descricao": "Verificar movimentação do operador com peça na montagem",
+      "regiao": "Painel Lateral (Col.B e C) LD/LE"
+    },
+    {
+      "id": "163",
+      "time": "2",
+      "tacto": "85",
+      "operacao": "Prateleira / Transbordo / Dolly / \nCarrinho Sequenciamento",
+      "modelo": "Saveiro",
+      "descricao": "Verificar Condição e Proteções do carrinho",
+      "regiao": "Grade Vigia"
+    },
+    {
+      "id": "164",
+      "time": "3",
+      "tacto": "86",
+      "operacao": "Fixação Farol LD/LE",
+      "modelo": "Saveiro",
+      "descricao": "Verificar Proteção Dispositivo",
+      "regiao": "Paralama e Farol LD/LE"
+    },
+    {
+      "id": "166",
+      "time": "3",
+      "tacto": "86",
+      "operacao": "Prateleira / Transbordo / Dolly / \nCarrinho Sequenciamento",
+      "modelo": "Saveiro",
+      "descricao": "Verificar Condição dos carrinhos de farol",
+      "regiao": "Farol"
+    },
+    {
+      "id": "167",
+      "time": "3",
+      "tacto": "86",
+      "operacao": "Fixação Farol LD/LE",
+      "modelo": "Saveiro",
+      "descricao": "Proteção em nylon bico máquina",
+      "regiao": "Paralama e Farol LD"
+    },
+    {
+      "id": "169",
+      "time": "3",
+      "tacto": "87",
+      "operacao": "Prateleira / Transbordo / Dolly / \nCarrinho Sequenciamento",
+      "modelo": "Nivus",
+      "descricao": "Verificar Condição do Rack do Aerofólio",
+      "regiao": "Aerofólio"
+    },
+    {
+      "id": "170",
+      "time": "3",
+      "tacto": "87",
+      "operacao": "Montagem Aerofólio",
+      "modelo": "Nivus",
+      "descricao": "Verificar bico imantado e Proteção em nylon",
+      "regiao": "Tampa Traseira e Aerofólio"
+    },
+    {
+      "id": "171",
+      "time": "3",
+      "tacto": "88",
+      "operacao": "Montagem Top Grill",
+      "modelo": "Todos",
+      "descricao": "Verificar condição Martelo",
+      "regiao": "Top Grill LD/LE"
+    },
+    {
+      "id": "173",
+      "time": "3",
+      "tacto": "88",
+      "operacao": "Reservatório Óleo Hidráulico - EA211",
+      "modelo": "Saveiro",
+      "descricao": "Proteção em nylon bico máquina",
+      "regiao": "Painel Frontal"
+    },
+    {
+      "id": "174",
+      "time": "2",
+      "tacto": "89",
+      "operacao": "Montagem Aerofólio",
+      "modelo": "Polo GTS",
+      "descricao": "Verificar condição dispositivo",
+      "regiao": "Tampa Traseira"
+    },
+    {
+      "id": "175",
+      "time": "2",
+      "tacto": "89",
+      "operacao": "Montagem Aerofólio",
+      "modelo": "Virtus",
+      "descricao": "Verificar condição dispositivo",
+      "regiao": "Tampa Traseira"
+    },
+    {
+      "id": "176",
+      "time": "2",
+      "tacto": "89",
+      "operacao": "Montagem Aerofólio",
+      "modelo": "Virtus",
+      "descricao": "Verificar condição Rolete",
+      "regiao": "Aerofólio +Tampa Traseira"
+    },
+    {
+      "id": "178",
+      "time": "3",
+      "tacto": "89",
+      "operacao": "Fixação do batente da tampa traseira",
+      "modelo": "27X",
+      "descricao": "Proteção em nylon bico máquina",
+      "regiao": "Tampa Traseira interno"
+    },
+    {
+      "id": "180",
+      "time": "3",
+      "tacto": "90",
+      "operacao": "Montagem Palheta Dianteira",
+      "modelo": "Saveiro",
+      "descricao": "Proteção em nylon bico máquina",
+      "regiao": "Top Grill LD/LE  e Tampa Dianteira Interno"
+    },
+    {
+      "id": "181",
+      "time": "3",
+      "tacto": "90",
+      "operacao": "Montagem Palheta Dianteira",
+      "modelo": "Saveiro",
+      "descricao": "Verificar Proteção cabeçote máquina",
+      "regiao": "Top Grill LD/LE  e Tampa Dianteira Interno"
+    },
+    {
+      "id": "182",
+      "time": "3",
+      "tacto": "90",
+      "operacao": "Montagem Palheta Dianteira",
+      "modelo": "Saveiro",
+      "descricao": "Verificar condição Dispositivo",
+      "regiao": "Top Grill LD/LE  e Tampa Dianteira Interno"
+    },
+    {
+      "id": "183",
+      "time": "3",
+      "tacto": "90",
+      "operacao": "Montagem Palheta Traseira",
+      "modelo": "Nivus-Polo GTS",
+      "descricao": "Proteção em nylon bico máquina",
+      "regiao": "Tampa Traseira e Vidro Vigia"
+    },
+    {
+      "id": "184",
+      "time": "3",
+      "tacto": "90",
+      "operacao": "Montagem Palheta Traseira",
+      "modelo": "Polo GTS",
+      "descricao": "Verificar Dispositivo + Limpeza + Películas de proteção",
+      "regiao": "Tampa Traseira e Vidro Vigia"
+    },
+    {
+      "id": "185",
+      "time": "3",
+      "tacto": "90",
+      "operacao": "Montagem Palheta Traseira",
+      "modelo": "Nivus",
+      "descricao": "Verificar Dispositivo + Limpeza + Películas de proteção",
+      "regiao": "Tampa Traseira e Vidro Vigia"
+    },
+    {
+      "id": "186",
+      "time": "3",
+      "tacto": "92",
+      "operacao": "Montagem da Asa Delta",
+      "modelo": "27X",
+      "descricao": "Verificar condição martelo",
+      "regiao": "Asa Delta / Porta / Paralama"
+    },
+    {
+      "id": "188",
+      "time": "3",
+      "tacto": "92",
+      "operacao": "Fixação do porta-luvas",
+      "modelo": "Saveiro",
+      "descricao": "Proteção em nylon bico máquina",
+      "regiao": "Porta Luvas"
+    },
+    {
+      "id": "189",
+      "time": "3",
+      "tacto": "92",
+      "operacao": "Prateleira / Transbordo / Dolly / \nCarrinho Sequenciamento",
+      "modelo": "27X",
+      "descricao": "Verificar a disposição das Asa delta",
+      "regiao": "Asa Delta"
+    },
+    {
+      "id": "190",
+      "time": "3",
+      "tacto": "92",
+      "operacao": "Fixação da Chapa da Caixa D'Água",
+      "modelo": "27X",
+      "descricao": "Proteção em nylon bico máquina",
+      "regiao": "Chapa da Caixa D'Água"
+    },
+    {
+      "id": "191",
+      "time": "3",
+      "tacto": "93",
+      "operacao": "Elevador Parachoque",
+      "modelo": "Saveiro",
+      "descricao": "Verificar proteção suporte que acomoda Polainas",
+      "regiao": "Polainas"
+    },
+    {
+      "id": "192",
+      "time": "3",
+      "tacto": "93",
+      "operacao": "Elevador Parachoque",
+      "modelo": "Todos",
+      "descricao": "Verificar proteções na saída do elevador de parachoque traseiro (deve estar toda revestida)",
+      "regiao": "Parachoque"
+    },
+    {
+      "id": "193",
+      "time": "3",
+      "tacto": "93",
+      "operacao": "Elevador Parachoque",
+      "modelo": "Todos",
+      "descricao": "Verificar limpeza das gôndulas do elevador de parachoque traseiro",
+      "regiao": "Parachoque"
+    },
+    {
+      "id": "196",
+      "time": "4",
+      "tacto": "95",
+      "operacao": "Mesa Apoio",
+      "modelo": "Todos",
+      "descricao": "Verificar proteção mesas de acomodação dos Parachoques dianteiros",
+      "regiao": "Parachoque dianteiro"
+    },
+    {
+      "id": "197",
+      "time": "4",
+      "tacto": "95",
+      "operacao": "Montagem Farol LD/LE",
+      "modelo": "Nivus",
+      "descricao": "Verificar proteção Dispositivo Ajuste",
+      "regiao": "Paralama e Farol LD/LE"
+    },
+    {
+      "id": "198",
+      "time": "4",
+      "tacto": "95",
+      "operacao": "Montagem Farol LD/LE",
+      "modelo": "Virtus",
+      "descricao": "Verificar proteção Dispositivo Ajuste",
+      "regiao": "Paralama e Farol LD/LE"
+    },
+    {
+      "id": "199",
+      "time": "4",
+      "tacto": "95",
+      "operacao": "Montagem Farol LD/LE",
+      "modelo": "Polo GTS",
+      "descricao": "Verificar proteção Dispositivo Ajuste",
+      "regiao": "Paralama e Farol LD/LE"
+    },
+    {
+      "id": "200",
+      "time": "4",
+      "tacto": "95",
+      "operacao": "Fixação Farol LD/LE",
+      "modelo": "27X",
+      "descricao": "Proteção em nylon bico máquina",
+      "regiao": "Paralama e Farol"
+    },
+    {
+      "id": "201",
+      "time": "4",
+      "tacto": "95",
+      "operacao": "Soltar porca da cinta da caixa de ferramenta",
+      "modelo": "Saveiro",
+      "descricao": "Proteção em nylon bico máquina",
+      "regiao": "Soleira"
+    },
+    {
+      "id": "202",
+      "time": "4",
+      "tacto": "95",
+      "operacao": "Fixação capa para-choque dianteiro",
+      "modelo": "27X",
+      "descricao": "Proteção em nylon bico máquina",
+      "regiao": "Paralama e Farol"
+    },
+    {
+      "id": "204",
+      "time": "4",
+      "tacto": "95",
+      "operacao": "Prateleira / Transbordo / Dolly / \nCarrinho Sequenciamento",
+      "modelo": "27X",
+      "descricao": "Verificar Condição dos carrinhos de Farol",
+      "regiao": "Farol"
+    },
+    {
+      "id": "205",
+      "time": "4",
+      "tacto": "96",
+      "operacao": "Fixação da Seletora",
+      "modelo": "Saveiro",
+      "descricao": "Proteção em nylon bico máquina",
+      "regiao": "Paralama"
+    },
+    {
+      "id": "206",
+      "time": "4",
+      "tacto": "96",
+      "operacao": "Fixação duto A/C no suporte do radiador",
+      "modelo": "27X",
+      "descricao": "Proteção em nylon bico máquina",
+      "regiao": "Paralama"
+    },
+    {
+      "id": "207",
+      "time": "4",
+      "tacto": "100",
+      "operacao": "Montagem Cladding Dianteiro",
+      "modelo": "Saveiro",
+      "descricao": "Verificar Roletes",
+      "regiao": "Cladding"
+    },
+    {
+      "id": "208",
+      "time": "4",
+      "tacto": "100",
+      "operacao": "Montagem Cladding Dianteiro",
+      "modelo": "Nivus",
+      "descricao": "Verificar Roletes",
+      "regiao": "Cladding"
+    },
+    {
+      "id": "210",
+      "time": "4",
+      "tacto": "100",
+      "operacao": "Prateleira / Transbordo / Dolly / \nCarrinho Sequenciamento",
+      "modelo": "Saveiro",
+      "descricao": "Verificar Carrinho de Transbordo (Estufa)",
+      "regiao": "Cladding"
+    },
+    {
+      "id": "215",
+      "time": "2",
+      "tacto": "83-84",
+      "operacao": "Fixação cabo positivo da bateria",
+      "modelo": "27X",
+      "descricao": "Proteção em nylon bico máquina",
+      "regiao": "Painel Frontal"
+    },
+    {
+      "id": "216",
+      "time": "",
+      "tacto": "",
+      "operacao": "Fixação Sensor ponto cego Parachoque",
+      "modelo": "27X",
+      "descricao": "Proteção em nylon bico máquina",
+      "regiao": "Tampa Traseira + Lateral"
+    }
+  ],
+  "B5": [
+    {
+      "id": "220",
+      "time": "1",
+      "tacto": "104",
+      "operacao": "Enchimentos Ar Condicionado / \nÓleo de freio",
+      "modelo": "Todos",
+      "descricao": "Verificar Proteções das Mangueiras",
+      "regiao": "Farol / Parachoque Dianteiro e \nParalama LD/LE"
+    },
+    {
+      "id": "221",
+      "time": "1",
+      "tacto": "104",
+      "operacao": "Montagem Chave de Seta",
+      "modelo": "Saveiro",
+      "descricao": "Verificar Banquinho auxiliar e Proteções (3 Unid.)",
+      "regiao": "Soleira Dianteira / Col. B e C"
+    },
+    {
+      "id": "222",
+      "time": "1",
+      "tacto": "104",
+      "operacao": "Montagem/Apontamento Chapa Preta",
+      "modelo": "Nivus",
+      "descricao": "Proteção em nylon bico máquina",
+      "regiao": "Chapa Preta / Farol e Paralama LD/LE"
+    },
+    {
+      "id": "223",
+      "time": "1",
+      "tacto": "105",
+      "operacao": "Bico das mangueiras do AC",
+      "modelo": "Todos",
+      "descricao": "Proteção em nylon bico máquina",
+      "regiao": "Paralama LD/LE"
+    },
+    {
+      "id": "224",
+      "time": "1",
+      "tacto": "106",
+      "operacao": "Enchimentos Água Radiador / \nLimpador Parabrisa",
+      "modelo": "Todos",
+      "descricao": "Verificar Proteções das Mangueiras",
+      "regiao": "Farol / Parachoque Dianteiro e \nParalama LD/LE"
+    },
+    {
+      "id": "225",
+      "time": "1",
+      "tacto": "106",
+      "operacao": "Dispositivos de Fixação dos Faróis",
+      "modelo": "Todos",
+      "descricao": "Verificar Proteções Dispositivo",
+      "regiao": "Front end"
+    },
+    {
+      "id": "228",
+      "time": "2",
+      "tacto": "109",
+      "operacao": "Enchimentos Combustível",
+      "modelo": "Todos",
+      "descricao": "Verificar Proteções das Mangueiras",
+      "regiao": "Farol / Parachoque Dianteiro e \nParalama LD/LE"
+    },
+    {
+      "id": "229",
+      "time": "2",
+      "tacto": "110",
+      "operacao": "Top Grill LE",
+      "modelo": "27X",
+      "descricao": "Verificar disposição da peça na montagem",
+      "regiao": "Front end"
+    },
+    {
+      "id": "230",
+      "time": "2",
+      "tacto": "111",
+      "operacao": "Estanquiedade",
+      "modelo": "Todos",
+      "descricao": "Verificar condição do Dispositivo de Estanquiedade",
+      "regiao": "Col. B LE abaixo do Batente de Porta + Soleira"
+    },
+    {
+      "id": "232",
+      "time": "2",
+      "tacto": "112",
+      "operacao": "Prateleira / Transbordo / Dolly / \nCarrinho Sequenciamento",
+      "modelo": "27X",
+      "descricao": "Verificar condição da Prateleira / Dolly / Carrinho Sequenciamento do Piano",
+      "regiao": "Piano"
+    },
+    {
+      "id": "235",
+      "time": "2",
+      "tacto": "114",
+      "operacao": "Regulagem do Freio de Mão",
+      "modelo": "Saveiro",
+      "descricao": "Verificar Proteções Dispositivo / Manipulador",
+      "regiao": "Soleira LE"
+    },
+    {
+      "id": "237",
+      "time": "2",
+      "tacto": "115",
+      "operacao": "Fixação Chapa Preta",
+      "modelo": "Todos",
+      "descricao": "Proteção em nylon bico máquina",
+      "regiao": "Chapa Preta / Farol e Paralama LD/LE"
+    },
+    {
+      "id": "238",
+      "time": "3",
+      "tacto": "115",
+      "operacao": "IBN2",
+      "modelo": "Todos",
+      "descricao": "Verificar Proteção do Alicate (Pinça)",
+      "regiao": "Paralama LE"
+    },
+    {
+      "id": "241",
+      "time": "3",
+      "tacto": "116",
+      "operacao": "Montagem da Lateral do Console",
+      "modelo": "27X",
+      "descricao": "Proteção em nylon bico máquina",
+      "regiao": "Lateral do Console"
+    },
+    {
+      "id": "242",
+      "time": "3",
+      "tacto": "117",
+      "operacao": "Enchimentos Óleo Direção Hidráulica",
+      "modelo": "Todos",
+      "descricao": "Verificar Proteções das Mangueiras",
+      "regiao": "Farol / Parachoque Dianteiro e \nParalama LD/LE"
+    },
+    {
+      "id": "243",
+      "time": "3",
+      "tacto": "118",
+      "operacao": "Centralização Volante",
+      "modelo": "Saveiro",
+      "descricao": "Verificar Proteção do Manipulador Centralização",
+      "regiao": "Col. B LE abaixo do Batente de Porta + Painel"
+    },
+    {
+      "id": "245",
+      "time": "3",
+      "tacto": "120",
+      "operacao": "Prateleira / Transbordo / Dolly / \nCarrinho Sequenciamento",
+      "modelo": "27X",
+      "descricao": "Verificar condição do Carrinho de Sequenciamento Palhetas",
+      "regiao": "Palhetas"
+    },
+    {
+      "id": "246",
+      "time": "4",
+      "tacto": "124",
+      "operacao": "Montagem das Calotas",
+      "modelo": "Todos",
+      "descricao": "Verificar Proteção do Suporte (trasbordo)",
+      "regiao": "Calotas"
+    },
+    {
+      "id": "247",
+      "time": "4",
+      "tacto": "124",
+      "operacao": "Montagem Rodas",
+      "modelo": "Todos",
+      "descricao": "Verificar proteção em nylon dos Soquetes das múltiplas de rodas LD/LE",
+      "regiao": "Rodas"
+    },
+    {
+      "id": "248",
+      "time": "4",
+      "tacto": "126",
+      "operacao": "Montagem Estepe",
+      "modelo": "27X",
+      "descricao": "Verificar proteção Manipulador de Estepe",
+      "regiao": "Parachoque Traseiro"
+    },
+    {
+      "id": "249",
+      "time": "4",
+      "tacto": "126",
+      "operacao": "Montagem dos Bancos Dianteiros",
+      "modelo": "Todos",
+      "descricao": "Verificar uso do Manipulador dos Bancos LE",
+      "regiao": "Bancos e Soleiras diant. E Tras. LD/LE"
+    },
+    {
+      "id": "250",
+      "time": "4",
+      "tacto": "126",
+      "operacao": "Montagem dos Bancos Dianteiros",
+      "modelo": "Todos",
+      "descricao": "Verificar proteção do Manipulador  dos Bancos LE",
+      "regiao": "Bancos e Soleiras diant. E Tras. LD/LE"
+    },
+    {
+      "id": "251",
+      "time": "4",
+      "tacto": "126",
+      "operacao": "Montagem dos Banco Traseiro",
+      "modelo": "Todos",
+      "descricao": "Verificar proteção do Manipulador do Banco Traseiro",
+      "regiao": "Banco e Soleira Tras. LE"
+    },
+    {
+      "id": "252",
+      "time": "4",
+      "tacto": "126",
+      "operacao": "Apontamento Parafuso Bancos",
+      "modelo": "Todos",
+      "descricao": "Proteção de nylon  bico máquina",
+      "regiao": "Bancos e Soleiras diant. E Tras. LD/LE"
+    },
+    {
+      "id": "253",
+      "time": "4",
+      "tacto": "126",
+      "operacao": "Fixação Fecho do Cinto",
+      "modelo": "27X",
+      "descricao": "Proteção de nylon bico máquina",
+      "regiao": "Coluna B e C LD"
+    },
+    {
+      "id": "255",
+      "time": "4",
+      "tacto": "127",
+      "operacao": "Prateleira / Transbordo / Dolly / \nCarrinho Sequenciamento",
+      "modelo": "Todos",
+      "descricao": "Verificar Condição dos Carrinhos de Volante",
+      "regiao": "Volante"
+    },
+    {
+      "id": "256",
+      "time": "4",
+      "tacto": "128",
+      "operacao": "Montagem Volante/Coluna de Direção",
+      "modelo": "27X",
+      "descricao": "Verificar Proteção da Máquina",
+      "regiao": "Volante"
+    },
+    {
+      "id": "257",
+      "time": "4",
+      "tacto": "128",
+      "operacao": "Montagem dos Bancos Dianteiros",
+      "modelo": "Todos",
+      "descricao": "Verificar uso do Manipulador dos Bancos LD",
+      "regiao": "Bancos e Soleiras diant. E Tras. LD/LE"
+    },
+    {
+      "id": "258",
+      "time": "4",
+      "tacto": "128",
+      "operacao": "Montagem dos Bancos Dianteiros",
+      "modelo": "Todos",
+      "descricao": "Verificar proteção do Manipulador  dos Bancos LD",
+      "regiao": "Bancos e Soleiras diant. E Tras. LD/LE"
+    },
+    {
+      "id": "259",
+      "time": "4",
+      "tacto": "128",
+      "operacao": "Apontamento Parafuso Bancos",
+      "modelo": "Todos",
+      "descricao": "Proteção de nylon  bico máquina",
+      "regiao": "Bancos e Soleiras diant. E Tras. LD/LE"
+    },
+    {
+      "id": "260",
+      "time": "4",
+      "tacto": "128",
+      "operacao": "Fixação Grade Parachoque Dianteiro",
+      "modelo": "27X",
+      "descricao": "Proteção de nylon bico máquina",
+      "regiao": "Grade Parachoque"
+    },
+    {
+      "id": "261",
+      "time": "5",
+      "tacto": "137",
+      "operacao": "Fixzação Cabo negativo da bateria",
+      "modelo": "Todos",
+      "descricao": "Proteção de nylon bico máquina",
+      "regiao": "Paralama LE"
+    },
+    {
+      "id": "262",
+      "time": "2",
+      "tacto": "112-113",
+      "operacao": "Fixação Grade Parachoque Dianteiro",
+      "modelo": "Saveiro",
+      "descricao": "Proteção de nylon bico máquina",
+      "regiao": "Grade Parachoque"
+    },
+    {
+      "id": "263",
+      "time": "4",
+      "tacto": "126 - 128",
+      "operacao": "Montagem dos Bancos Dianteiros",
+      "modelo": "27X",
+      "descricao": "Verificar condição da proteção da Soleira (Sobressooleira) LD/LE",
+      "regiao": "Soleira e Revest. Soleira LD/LE"
+    },
+    {
+      "id": "264",
+      "time": "4",
+      "tacto": "126 - 128",
+      "operacao": "Montagem dos Bancos Dianteiros",
+      "modelo": "27X",
+      "descricao": "Verificar uso da proteção da Soleira na montagem dos bancos LD/LE",
+      "regiao": "Soleira e Revest. Soleira LD/LE"
+    },
+    {
+      "id": "265",
+      "time": "4",
+      "tacto": "126 - 128",
+      "operacao": "Montagem dos Bancos Dianteiros",
+      "modelo": "Saveiro",
+      "descricao": "Verificar condição da proteção da Soleira (Sobressooleira) LD/LE",
+      "regiao": "Soleira e Revest. Soleira LD/LE"
+    },
+    {
+      "id": "266",
+      "time": "4",
+      "tacto": "126 - 128",
+      "operacao": "Montagem dos Bancos Dianteiros",
+      "modelo": "Saveiro",
+      "descricao": "Verificar uso da proteção da Soleira na montagem dos bancos LD/LE",
+      "regiao": "Soleira e Revest. Soleira LD/LE"
+    },
+    {
+      "id": "267",
+      "time": "4",
+      "tacto": "126\n127",
+      "operacao": "Montagem Estepe",
+      "modelo": "Saveiro",
+      "descricao": "Verificar proteção Manipulador de Estepe",
+      "regiao": "Tampa Traseira e Parachoque Traseiro"
+    },
+    {
+      "id": "268",
+      "time": "5",
+      "tacto": "Após Recolocação",
+      "operacao": "Fixação dos Bancos Dianteiros LD/LE",
+      "modelo": "Todos",
+      "descricao": "Proteção de nylon retrátil bico máquina LD/LE",
+      "regiao": "Bancos e Soleiras diant. E Tras. LD/LE"
+    },
+    {
+      "id": "270",
+      "time": "06\nB5",
+      "tacto": "Col.EF\n15-16",
+      "operacao": "Prateleira / Transbordo / Dolly / \nCarrinho Sequenciamento",
+      "modelo": "Saveiro",
+      "descricao": "Verificar condição do Carrinho de Sequenciamento Rack de Teto",
+      "regiao": "Rack de Teto"
+    },
+    {
+      "id": "271",
+      "time": "06\nB5",
+      "tacto": "Esteira\nOK6",
+      "operacao": "Montagem Rack de Teto",
+      "modelo": "Saveiro",
+      "descricao": "Verificar proteção Suporte para disposição do Rack do Teto",
+      "regiao": "Rack de Teto"
+    },
+    {
+      "id": "272",
+      "time": "06\nB5",
+      "tacto": "Esteira\nOK6",
+      "operacao": "IBN3",
+      "modelo": "Todos",
+      "descricao": "Verificar proteção Mesa das MPS (Esteira OK6)",
+      "regiao": "Rack de Teto"
+    },
+    {
+      "id": "273",
+      "time": "06\nB5",
+      "tacto": "Esteira\nOK6",
+      "operacao": "IBN3",
+      "modelo": "Todos",
+      "descricao": "Verificar condição interna do encaixe no Volante das MPS's + Suporte Tomada USB (7 máquinas)",
+      "regiao": "Volante + Console"
+    },
+    {
+      "id": "274",
+      "time": "06\nB5",
+      "tacto": "Esteira\nOK6",
+      "operacao": "IBN3",
+      "modelo": "Todos",
+      "descricao": "Verificar condição da Capa MDA/Hand Held",
+      "regiao": "Teto"
+    },
+    {
+      "id": "275",
+      "time": "06\nB5",
+      "tacto": "Esteira\nOK6",
+      "operacao": "IBN3",
+      "modelo": "Todos",
+      "descricao": "Verificar Proteção do Alicate (Pinça)",
+      "regiao": "Paralama LE"
+    },
+    {
+      "id": "276",
+      "time": "06\nB5",
+      "tacto": "Esteira\nOK6",
+      "operacao": "IBN3",
+      "modelo": "Todos",
+      "descricao": "Verificar proteção Mesa FEC/Venda de veículos (Esteira OK6)",
+      "regiao": "Portas dianteiras e traseiras LD/LE"
+    },
+    {
+      "id": "277",
+      "time": "06\nB5",
+      "tacto": "Esteira\nOK6",
+      "operacao": "Montagem Rack de Teto/Gancho caçamba (Desoutter)",
+      "modelo": "Saveiro",
+      "descricao": "Proteção em nylon bico máquina (3 máquinas)",
+      "regiao": "Rack de Teto e Painel Lateral (Região Superior da Porta)"
+    },
+    {
+      "id": "278",
+      "time": "06\nB5",
+      "tacto": "Esteira\nOK6",
+      "operacao": "Montagem Rack de Teto/Gancho caçamba (Makita)",
+      "modelo": "Saveiro",
+      "descricao": "Proteção em nylon bico máquina (3 máquinas)",
+      "regiao": "Rack de Teto e Painel Lateral (Região Superior da Porta)"
+    },
+    {
+      "id": "280",
+      "time": "5",
+      "tacto": "Recolocação",
+      "operacao": "Fixação Periféricos - Réguas",
+      "modelo": "Saveiro",
+      "descricao": "Proteção de nylon bico máquina",
+      "regiao": "Coluna D + Painel Lateral LD/LE"
+    },
+    {
+      "id": "281",
+      "time": "5",
+      "tacto": "Recolocação",
+      "operacao": "Montagem Periféricos - Réguas",
+      "modelo": "Saveiro",
+      "descricao": "Verificar se tem réguas \"jogadas\" nas estufas LD/LE ou na área (peça deve ir da embalagem para o carro)",
+      "regiao": "Régua Caçamba"
+    },
+    {
+      "id": "282",
+      "time": "5",
+      "tacto": "Recolocação",
+      "operacao": "Fixação do Piscinão",
+      "modelo": "Saveiro",
+      "descricao": "Verificar proteções nylon dos bicos da fixação do Piscinão",
+      "regiao": "Coluna D + Painel Lateral LD/LE"
+    },
+    {
+      "id": "283",
+      "time": "5",
+      "tacto": "Recolocação",
+      "operacao": "Fixação Dobradiça das Portas",
+      "modelo": "Todos",
+      "descricao": "Proteção de nylon bico máquina",
+      "regiao": "Porta Dianteira e Traseira LE e Col. A e B"
+    },
+    {
+      "id": "284",
+      "time": "5",
+      "tacto": "Recolocação",
+      "operacao": "Recolocação Portas",
+      "modelo": "Todos",
+      "descricao": "Condição das chapelonas de proteção recolocação de portas traseira LE (Sujeiras / hóstias)",
+      "regiao": "Porta Traseira LE"
+    },
+    {
+      "id": "285",
+      "time": "5",
+      "tacto": "Recolocação",
+      "operacao": "Recolocação Portas",
+      "modelo": "Todos",
+      "descricao": "Condição das chapelonas de proteção recolocação de portas traseira LD (Sujeiras / hóstias)",
+      "regiao": "Porta Traseira LD"
+    },
+    {
+      "id": "288",
+      "time": "5",
+      "tacto": "Recolocação",
+      "operacao": "Montagem Periféricos - Réguas",
+      "modelo": "Saveiro",
+      "descricao": "Condição do banco de montagem dos periféricos Saveiro (princ. base - risco na caçamba)",
+      "regiao": "Régua Caçamba"
+    },
+    {
+      "id": "289",
+      "time": "5",
+      "tacto": "Recolocação",
+      "operacao": "Recolocação Portas",
+      "modelo": "Todos",
+      "descricao": "Utilização das gravatinhas na recolocação de porta traseira LE",
+      "regiao": "Porta Traseira LE"
+    },
+    {
+      "id": "290",
+      "time": "5",
+      "tacto": "Recolocação",
+      "operacao": "Recolocação Portas",
+      "modelo": "Todos",
+      "descricao": "Verificar uso das chapelonas de proteção recolocação de portas dianteira LD (Sujeiras / hóstias)",
+      "regiao": "Porta Dianteira LD"
+    },
+    {
+      "id": "291",
+      "time": "5",
+      "tacto": "Recolocação",
+      "operacao": "Recolocação Portas",
+      "modelo": "Todos",
+      "descricao": "Utilização das gravatinhas na recolocação de porta traseira LD",
+      "regiao": "Porta Traseira LD"
+    },
+    {
+      "id": "292",
+      "time": "5",
+      "tacto": "Recolocação",
+      "operacao": "Recolocação Portas",
+      "modelo": "Todos",
+      "descricao": "Condição das chapelonas de proteção recolocação de portas dianteira LE (Sujeiras / hóstias)",
+      "regiao": "Porta Dianteira LE"
+    },
+    {
+      "id": "293",
+      "time": "5",
+      "tacto": "Recolocação",
+      "operacao": "Recolocação Portas",
+      "modelo": "Todos",
+      "descricao": "Verificar uso das chapelonas de proteção recolocação de portas dianteira LE (Sujeiras / hóstias)",
+      "regiao": "Porta Dianteira LE"
+    },
+    {
+      "id": "294",
+      "time": "5",
+      "tacto": "Recolocação",
+      "operacao": "Recolocação Portas",
+      "modelo": "Todos",
+      "descricao": "Condição das chapelonas de proteção recolocação de portas dianteira LD (Sujeiras / hóstias)",
+      "regiao": "Porta Dianteira LD"
+    },
+    {
+      "id": "295",
+      "time": "5",
+      "tacto": "Recolocação",
+      "operacao": "Fixação limitador",
+      "modelo": "27X",
+      "descricao": "Proteção de nylon bico máquina",
+      "regiao": "Porta Dianteira e Traseira LD e Col. A e B"
+    },
+    {
+      "id": "296",
+      "time": "5",
+      "tacto": "Recolocação",
+      "operacao": "Fixação limitador",
+      "modelo": "Saveiro",
+      "descricao": "Proteção de nylon bico máquina",
+      "regiao": "Porta Dianteira e Traseira LD e Col. A e B"
+    }
+  ],
+  "Cockpit": [
+    {
+      "id": "297",
+      "time": "2",
+      "tacto": "20",
+      "operacao": "Montagem Casca do Painel",
+      "modelo": "27X",
+      "descricao": "Interferencias no posto de montagem da casca de painel no frame do cockpit",
+      "regiao": "Casca Painel"
+    },
+    {
+      "id": "298",
+      "time": "2",
+      "tacto": "21",
+      "operacao": "PAD",
+      "modelo": "27X",
+      "descricao": "Verificar Montagem PAD (peças dispostas ou \"jogadas\" com potencial de risco)",
+      "regiao": "PAD"
+    },
+    {
+      "id": "299",
+      "time": "2",
+      "tacto": "27",
+      "operacao": "Prateleira / Transbordo / Dolly / \nCarrinho Sequenciamento",
+      "modelo": "Todos",
+      "descricao": "Verificar condição do Carrinho de Sequenciamento - Rádio",
+      "regiao": "Rádio"
+    },
+    {
+      "id": "301",
+      "time": "2",
+      "tacto": "27",
+      "operacao": "Prateleira / Transbordo / Dolly / \nCarrinho Sequenciamento",
+      "modelo": "27X",
+      "descricao": "Verificar 10 peças - Cobertura dos fusiveis do painel (disposição das peças / peças \"jogadas\" / contato)",
+      "regiao": "Cobertura dos fusiveis do painel"
+    },
+    {
+      "id": "302",
+      "time": "2",
+      "tacto": "29",
+      "operacao": "Prateleira / Transbordo / Dolly / \nCarrinho Sequenciamento",
+      "modelo": "27X",
+      "descricao": "Verificar 10 peças - Cobertura chave de Seta na embalagem  (peças dispostas / \"jogadas\" com potencial de risco)",
+      "regiao": "Cobertura Chave de Seta"
+    },
+    {
+      "id": "303",
+      "time": "2",
+      "tacto": "30",
+      "operacao": "Montagem PAD",
+      "modelo": "27X",
+      "descricao": "Condições marreta utilizada no PAD (deve estar 100% protegida região de contato)",
+      "regiao": "PAD"
+    },
+    {
+      "id": "304",
+      "time": "2",
+      "tacto": "30",
+      "operacao": "Montagem PAD",
+      "modelo": "27X",
+      "descricao": "Condições dispositivo do PAD (limpeza e proteções)",
+      "regiao": "Cúpula do Painel"
+    },
+    {
+      "id": "306",
+      "time": "2",
+      "tacto": "35",
+      "operacao": "Pré-Montagem Casca do Painel",
+      "modelo": "Saveiro",
+      "descricao": "Condições posto de pré mtg do painel (limpeza e proteções / contato metálico)",
+      "regiao": "Casca Painel"
+    },
+    {
+      "id": "307",
+      "time": "2",
+      "tacto": "35",
+      "operacao": "Pré-Montagem Casca do Painel",
+      "modelo": "Saveiro",
+      "descricao": "Proteção bico da rebitadeira de plaqueta VIN no painel da Saveiro",
+      "regiao": "Casca Painel"
+    },
+    {
+      "id": "308",
+      "time": "2",
+      "tacto": "35",
+      "operacao": "Pré-Montagem Casca do Painel",
+      "modelo": "Saveiro",
+      "descricao": "Manuseio painel pronto (Não pode encostar um no outro na mesa)",
+      "regiao": "Casca Painel"
+    },
+    {
+      "id": "309",
+      "time": "Todos",
+      "tacto": "Buyoff",
+      "operacao": "Capa Painel",
+      "modelo": "27X",
+      "descricao": "Verificar se o Buy-off abaixa a capa do painel depois da verificação (rotina/retrabalhos)",
+      "regiao": "Casca Painel"
+    },
+    {
+      "id": "311",
+      "time": "4",
+      "tacto": "COL BC19",
+      "operacao": "Pré-Montagem Parachoque Central",
+      "modelo": "Saveiro",
+      "descricao": "Verificar condições posto de pré mtg do Parachoque Central (limpeza e proteções / contato metálico)",
+      "regiao": "Parachoque Central"
+    },
+    {
+      "id": "314",
+      "time": "4",
+      "tacto": "Col. EF- E\n 19",
+      "operacao": "Pré-Montagem Casca do Painel",
+      "modelo": "27X",
+      "descricao": "Verificar condições posto de pré mtg do painel (limpeza e proteções / contato metálico)",
+      "regiao": "Casca Painel"
+    },
+    {
+      "id": "316",
+      "time": "4",
+      "tacto": "Col. FG22/\nTacto 21",
+      "operacao": "Prateleira / Transbordo / Dolly / \nCarrinho Sequenciamento",
+      "modelo": "Todos",
+      "descricao": "Verificar condição do Carrinho de Sequenciamento - Instrumento Combinado",
+      "regiao": "Instrumento Combinado"
+    },
+    {
+      "id": "318",
+      "time": "4",
+      "tacto": "Col.\n F20 - 21",
+      "operacao": "Prateleira / Transbordo / Dolly / \nCarrinho Sequenciamento",
+      "modelo": "27X",
+      "descricao": "Verificar difusor de ar na embalagem  (peças dispostas ou \"jogadas\" com potencial de risco)",
+      "regiao": "Disfusor de Ar"
+    },
+    {
+      "id": "319",
+      "time": "Todos",
+      "tacto": "Todos",
+      "operacao": "Montagem PAD",
+      "modelo": "27X",
+      "descricao": "Verificar condições das proteções dos ganchos dos frames que seguram os PAD's LE (menor)",
+      "regiao": "PAD"
+    }
+  ],
+  "Doorless": [
+    {
+      "id": "320",
+      "time": "1",
+      "tacto": "3",
+      "operacao": "Montagem Limitador LD/LE",
+      "modelo": "Todos",
+      "descricao": "Proteção em nylon bico máquina",
+      "regiao": "Região de Limitador"
+    },
+    {
+      "id": "321",
+      "time": "1",
+      "tacto": "5",
+      "operacao": "Montagem Fechadura LD/LE",
+      "modelo": "27X",
+      "descricao": "Proteção em nylon bico máquina",
+      "regiao": "Região da Fechadura"
+    },
+    {
+      "id": "322",
+      "time": "1",
+      "tacto": "5",
+      "operacao": "Apontamento dos parafusos Fechadura LD/LE",
+      "modelo": "27X",
+      "descricao": "Proteção em nylon bico máquina",
+      "regiao": "Região da Fechadura"
+    },
+    {
+      "id": "323",
+      "time": "1",
+      "tacto": "5",
+      "operacao": "Apontamento dos parafusos Fechadura LD/LE",
+      "modelo": "Saveiro",
+      "descricao": "Proteção em nylon bico máquina",
+      "regiao": "Região da Fechadura"
+    },
+    {
+      "id": "324",
+      "time": "1",
+      "tacto": "5",
+      "operacao": "Fixação do arco mancal LD/LE",
+      "modelo": "Todos",
+      "descricao": "Bico imantado ou proteção de nylon com ímã",
+      "regiao": "Região da Maçaneta"
+    },
+    {
+      "id": "325",
+      "time": "1",
+      "tacto": "5",
+      "operacao": "Fixação Máq.Vidro LD/LE",
+      "modelo": "Todos",
+      "descricao": "Proteção em nylon bico máquina",
+      "regiao": "Interno de Portas"
+    },
+    {
+      "id": "326",
+      "time": "1",
+      "tacto": "5",
+      "operacao": "Montagem Fechadura LD/LE",
+      "modelo": "Saveiro",
+      "descricao": "Proteção em nylon bico máquina",
+      "regiao": "Região da Fechadura"
+    },
+    {
+      "id": "327",
+      "time": "1",
+      "tacto": "9",
+      "operacao": "Montagem Canaleta Traseira LD/LE",
+      "modelo": "Nivus",
+      "descricao": "Verificar condição dos dispositivos LD/LE",
+      "regiao": "Canaleta Dianteira e Traseira  LD/LE"
+    },
+    {
+      "id": "328",
+      "time": "1",
+      "tacto": "9",
+      "operacao": "Montagem Canaleta Traseira LD/LE",
+      "modelo": "Virtus",
+      "descricao": "Verificar condição dos dispositivos LD/LE",
+      "regiao": "Canaleta Dianteira e Traseira  LD/LE"
+    },
+    {
+      "id": "329",
+      "time": "1",
+      "tacto": "9",
+      "operacao": "Montagem Canaleta Traseira LD/LE",
+      "modelo": "Polo GTS",
+      "descricao": "Verificar condição dos dispositivos LD/LE",
+      "regiao": "Canaleta Dianteira e Traseira  LD/LE"
+    },
+    {
+      "id": "330",
+      "time": "1",
+      "tacto": "9",
+      "operacao": "Montagem Canaleta",
+      "modelo": "Todos",
+      "descricao": "Verificar se há riscos em peças montada na corroceria",
+      "regiao": "Canaleta Dianteira e Traseira  LD/LE"
+    },
+    {
+      "id": "333",
+      "time": "1",
+      "tacto": "10",
+      "operacao": "Prateleira / Transbordo / Dolly / \nCarrinho Sequenciamento",
+      "modelo": "27X",
+      "descricao": "Verificar condição dos carrinhos de transbordo das Canaletas Traseiras LD/LE",
+      "regiao": "Canaleta Traseira  LD/LE"
+    },
+    {
+      "id": "334",
+      "time": "1",
+      "tacto": "10",
+      "operacao": "Prateleira / Transbordo / Dolly / \nCarrinho Sequenciamento",
+      "modelo": "Todos",
+      "descricao": "Verificar condição dos carrinhos de transbordo  das Canaletas Dianteiras LD/LE",
+      "regiao": "Canaleta Dianteira LD/LE"
+    },
+    {
+      "id": "335",
+      "time": "1",
+      "tacto": "10",
+      "operacao": "Montagem Blend Igrejinha",
+      "modelo": "27X",
+      "descricao": "Verificar condições do dispositivo de montagem do Blend Porta traseira LD/LE",
+      "regiao": "Blend"
+    },
+    {
+      "id": "336",
+      "time": "1",
+      "tacto": "10",
+      "operacao": "Montagem Blend",
+      "modelo": "27X",
+      "descricao": "Verificar se montador disponhe a peça no vão de porta",
+      "regiao": "Blend"
+    },
+    {
+      "id": "337",
+      "time": "2",
+      "tacto": "13",
+      "operacao": "Montagem Pestanas",
+      "modelo": "Todos",
+      "descricao": "Verificar condição dos martelinhos da pestana\n(deve estar polidos e sem marcar as peças)",
+      "regiao": "Pestanas em Geral"
+    },
+    {
+      "id": "339",
+      "time": "2",
+      "tacto": "17",
+      "operacao": "Montagem Retrovisor",
+      "modelo": "27X",
+      "descricao": "Proteção em nylon bico máquina",
+      "regiao": "Região Retrovisor"
+    },
+    {
+      "id": "340",
+      "time": "2",
+      "tacto": "17",
+      "operacao": "Montagem Retrovisor",
+      "modelo": "Saveiro",
+      "descricao": "Proteção em nylon bico máquina",
+      "regiao": "Região Retrovisor"
+    },
+    {
+      "id": "341",
+      "time": "2",
+      "tacto": "19",
+      "operacao": "Montagem Vidros Dianteiros",
+      "modelo": "27X",
+      "descricao": "Verificar o uso da proteção (espuma tubular)",
+      "regiao": "Canaleta Dianteira LD/LE"
+    },
+    {
+      "id": "342",
+      "time": "3",
+      "tacto": "20",
+      "operacao": "Fix. Capinha interna Retrovisor - Montagem Película",
+      "modelo": "Saveiro",
+      "descricao": "Proteção em nylon bico máquina",
+      "regiao": "Capinha interna Retrovisor"
+    },
+    {
+      "id": "345",
+      "time": "3",
+      "tacto": "21",
+      "operacao": "Montagem Revestimento LD/LE",
+      "modelo": "27X",
+      "descricao": "Proteção em nylon bico máquina",
+      "regiao": "Revestimento de Portas"
+    },
+    {
+      "id": "346",
+      "time": "3",
+      "tacto": "21",
+      "operacao": "Montagem Revestimento LD/LE",
+      "modelo": "Saveiro",
+      "descricao": "Proteção em nylon bico máquina",
+      "regiao": "Revestimento de Portas"
+    },
+    {
+      "id": "348",
+      "time": "1",
+      "tacto": "Col. \nF28-30",
+      "operacao": "Prateleira / Transbordo / Dolly / \nCarrinho Sequenciamento",
+      "modelo": "27X",
+      "descricao": "Verificar disposição das Canaletas na pré-montagem",
+      "regiao": "Canaleta Dianteira e Traseira  LD/LE"
+    },
+    {
+      "id": "349",
+      "time": "1",
+      "tacto": "Col. F30",
+      "operacao": "Prateleira / Transbordo / Dolly / \nCarrinho Sequenciamento",
+      "modelo": "27X",
+      "descricao": "Verificar disposição Blends na pré-montagem",
+      "regiao": "Blend Dianteiro e Traseiro  LD/LE"
+    },
+    {
+      "id": "350",
+      "time": "Geral",
+      "tacto": "Todos",
+      "operacao": "Ganchos de Máquinas",
+      "modelo": "Todos",
+      "descricao": "Verificar se há máquinas sem ganchos pelo processo",
+      "regiao": "Portas geral"
+    }
+  ],
+  "Frontend": [
+    {
+      "id": "352",
+      "time": "",
+      "tacto": "COL CD17",
+      "operacao": "Prateleira / Transbordo / Dolly / \nCarrinho Sequenciamento",
+      "modelo": "todos",
+      "descricao": "Verificar 10 peças - Parachoque Traseiro\n(pode ser no veículo, avisar líder se tiver riscos)",
+      "regiao": "Parachoque + Polaina"
+    },
+    {
+      "id": "353",
+      "time": "",
+      "tacto": "COL CD17",
+      "operacao": "Prateleira / Transbordo / Dolly / \nCarrinho Sequenciamento",
+      "modelo": "Todos",
+      "descricao": "Verificar condição das proteções dos carrinhos",
+      "regiao": "Parachoque + Polaina"
+    },
+    {
+      "id": "354",
+      "time": "",
+      "tacto": "COL CD17",
+      "operacao": "Mesa Apoio Térreo",
+      "modelo": "Todos",
+      "descricao": "Verificar proteção mesas de acomodação dos Parachoques",
+      "regiao": "Parachoque + Polaina"
+    }
+  ],
+  "OK6": [
+    {
+      "id": "355",
+      "time": "1",
+      "tacto": "Esteira\nOK6",
+      "operacao": "Retrabalho de Elétrica",
+      "modelo": "Todos",
+      "descricao": "Verificar condição interna do encaixe no Volante das MPS's + Proteções (4 máquinas)",
+      "regiao": "Volante"
+    },
+    {
+      "id": "356",
+      "time": "Ajuste",
+      "tacto": "Esteira\nOK6",
+      "operacao": "Ajuste Geral",
+      "modelo": "Todos",
+      "descricao": "Verificar proteção  dos carrinhos do Time de Ajuste",
+      "regiao": "Carroceria Geral"
+    },
+    {
+      "id": "357",
+      "time": "Ajuste",
+      "tacto": "Esteira\nOK6",
+      "operacao": "Ajuste Geral",
+      "modelo": "Todos",
+      "descricao": "Verificar proteção dos Torquímetros",
+      "regiao": "Carroceria Geral"
+    },
+    {
+      "id": "358",
+      "time": "Ajuste",
+      "tacto": "Esteira\nOK6",
+      "operacao": "Ajuste Geral",
+      "modelo": "Todos",
+      "descricao": "Verificar proteção das Ferramentas Metálicas de ajuste",
+      "regiao": "Carroceria Geral"
+    },
+    {
+      "id": "359",
+      "time": "Ajuste",
+      "tacto": "Esteira\nOK6",
+      "operacao": "Ajuste de Parachoque",
+      "modelo": "Todos",
+      "descricao": "Verificar condição da Marreta de ajuste Parachoque",
+      "regiao": "Parachoque Dianteiro e Traseiro"
+    },
+    {
+      "id": "360",
+      "time": "Ajuste",
+      "tacto": "Esteira\nOK6",
+      "operacao": "Ajuste de Portas",
+      "modelo": "Todos",
+      "descricao": "Verificar condição e proteção do Ferrão (Polimento quando necessário)",
+      "regiao": "Col.B / Col. C / Dobradiças e Portas"
+    },
+    {
+      "id": "361",
+      "time": "Ajuste",
+      "tacto": "Esteira\nOK6",
+      "operacao": "Ajuste de Portas",
+      "modelo": "Todos",
+      "descricao": "Verificar uso da proteção (Castelinho) Torquímetros de Portas",
+      "regiao": "Col.B / Col. C e Portas"
+    },
+    {
+      "id": "362",
+      "time": "2",
+      "tacto": "OK6",
+      "operacao": "Geometria/Testor",
+      "modelo": "Todos",
+      "descricao": "Verificar condição interna do encaixe no Volante das MPS's + Proteções (12 máquinas)",
+      "regiao": "Volante"
+    }
+  ]
+};
+
+// ===================== STATE =====================
+let currentSector = null;
+let state = {}; // { sectorKey: { itemIndex: { status, obs, photos } } }
+let chartInstance = null;
+
+// ===================== INIT =====================
+document.addEventListener('DOMContentLoaded', () => {
+  setDate();
+  loadStateFromStorage();
+  loadEmailConfig();
+  loadOrderFromStorage();
+});
+
+function setDate() {
+  const now = new Date();
+  const opts = { weekday: 'short', day: '2-digit', month: '2-digit', year: 'numeric' };
+  const formatted = now.toLocaleDateString('pt-BR', opts);
+  document.getElementById('header-date').textContent = formatted;
+}
+
+// ===================== STATE MANAGEMENT =====================
+function loadStateFromStorage() {
+  try {
+    const saved = localStorage.getItem('vcp_state_v2');
+    if (saved) state = JSON.parse(saved);
+  } catch(e) {}
+}
+
+function saveState() {
+  try {
+    localStorage.setItem('vcp_state_v2', JSON.stringify(state));
+  } catch(e) {}
+}
+
+function getItemState(sector, idx) {
+  if (!state[sector]) state[sector] = {};
+  if (!state[sector][idx]) state[sector][idx] = { status: null, obs: '', photos: [] };
+  return state[sector][idx];
+}
+
+// ===================== SECTOR LOADING =====================
+function loadSector(sectorKey) {
+  if (!sectorKey) {
+    currentSector = null;
+    document.getElementById('main-content').innerHTML = `
+      <div class="empty-state">
+        <span class="empty-state-icon">🏭</span>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:600;color:#4a6380;margin-bottom:6px;">VCP Suporte Montagem</div>
+        <div style="font-size:13px;color:#3a4f66;">Selecione um setor para iniciar o checklist</div>
+      </div>`;
+    document.getElementById('progress-wrap').style.display = 'none';
+    return;
+  }
+
+  currentSector = sectorKey;
+  const items = CHECKLIST_DATA[sectorKey] || [];
+  document.getElementById('progress-wrap').style.display = 'block';
+
+  const orderedItems = getOrderedItems(sectorKey, items);
+  const html = `
+    <div class="sector-header">
+      <div class="sector-badge">${sectorKey}</div>
+      <div class="sector-count">${items.length} itens</div>
+    </div>
+    <div class="reorder-hint">⠿ Segure e arraste para reordenar itens</div>
+    <div id="sortable-list-${sectorKey}">
+      ${orderedItems.map((item, idx) => renderItem(item, item._origIdx, sectorKey)).join('')}
+    </div>
+  `;
+  document.getElementById('main-content').innerHTML = html;
+  updateProgress();
+  restoreItemStates(sectorKey, items);
+  initSortable(sectorKey);
+}
+
+function renderItem(item, idx, sector) {
+  const st = getItemState(sector, idx);
+  const statusClass = st.status === 'ok' ? 'status-ok' : st.status === 'nok' ? 'status-nok' : 'status-pending';
+  const statusIcon = st.status === 'ok' ? '✓' : st.status === 'nok' ? '✗' : '○';
+  const statusIconClass = st.status === 'ok' ? 'ok' : st.status === 'nok' ? 'nok' : 'pending';
+  const okActive = st.status === 'ok' ? 'active' : '';
+  const nokActive = st.status === 'nok' ? 'active' : '';
+
+  return `
+    <div class="item-card ${statusClass}" id="card-${idx}" data-idx="${idx}" data-orig-idx="${idx}">
+      <div class="item-header" onclick="toggleCardIfNotDrag(event, ${idx})">
+        <div class="drag-handle" onpointerdown="event.stopPropagation()" title="Arrastar para reordenar">⠿</div>
+        <div class="item-number">#${item.id}</div>
+        <div class="item-info">
+          <div class="item-operacao">${esc(item.operacao) || esc(item.descricao)}</div>
+          ${item.descricao && item.descricao !== item.operacao ? `<div class="item-descricao">${esc(item.descricao)}</div>` : ''}
+          <div class="item-tags">
+            ${item.modelo ? `<span class="tag tag-modelo">${esc(item.modelo)}</span>` : ''}
+            ${item.regiao ? `<span class="tag tag-regiao">${esc(item.regiao)}</span>` : ''}
+            ${item.tacto ? `<span class="tag tag-tacto">Tacto ${esc(item.tacto)}</span>` : ''}
+            ${item.time ? `<span class="tag tag-time">Time ${esc(item.time)}</span>` : ''}
+          </div>
+        </div>
+        <div class="item-status-indicator ${statusIconClass}">${statusIcon}</div>
+      </div>
+      <div class="item-body" id="body-${idx}">
+        <div class="check-buttons">
+          <button class="btn-check ok-btn ${okActive}" id="btn-ok-${idx}" onclick="setStatus(${idx},'ok')">
+            <span class="btn-icon">✓</span> OK
+          </button>
+          <button class="btn-check nok-btn ${nokActive}" id="btn-nok-${idx}" onclick="setStatus(${idx},'nok')">
+            <span class="btn-icon">✗</span> NOK
+          </button>
+        </div>
+        <div class="obs-label">Observações</div>
+        <textarea class="obs-textarea" id="obs-${idx}" placeholder="Registre observações aqui..." 
+          oninput="saveObs(${idx}, this.value)">${esc(st.obs)}</textarea>
+        <div class="photo-section">
+          <span class="photo-label">📷 Foto do item</span>
+          <label class="photo-upload-btn" for="photo-${idx}">
+            <span class="upload-icon">📷</span>
+            <span>Tirar/Adicionar Foto</span>
+          </label>
+          <input type="file" id="photo-${idx}" accept="image/*" capture="environment" 
+            onchange="handlePhoto(${idx}, this)">
+          <div class="photo-preview" id="photos-${idx}"></div>
+        </div>
+        <a class="ref-link" href="#" onclick="openRefPhoto(${idx}); return false;">
+          <span class="ref-icon">🔍</span>
+          <span>Ver foto de referência</span>
+        </a>
+      </div>
+    </div>`;
+}
+
+function esc(str) {
+  if (!str) return '';
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function restoreItemStates(sector, items) {
+  items.forEach((item, idx) => {
+    const st = getItemState(sector, idx);
+    if (st.photos && st.photos.length > 0) {
+      const preview = document.getElementById(`photos-${idx}`);
+      if (preview) {
+        preview.innerHTML = st.photos.map(src => 
+          `<img class="photo-thumb" src="${src}">`).join('');
+      }
+    }
+  });
+}
+
+// ===================== ORDER MANAGEMENT =====================
+let sectorOrder = {}; // { sectorKey: [origIdx, origIdx, ...] }
+
+function loadOrderFromStorage() {
+  try {
+    const saved = localStorage.getItem('vcp_order_v1');
+    if (saved) sectorOrder = JSON.parse(saved);
+  } catch(e) {}
+}
+
+function saveOrder() {
+  try { localStorage.setItem('vcp_order_v1', JSON.stringify(sectorOrder)); } catch(e) {}
+}
+
+function getOrderedItems(sectorKey, items) {
+  const order = sectorOrder[sectorKey];
+  if (!order || order.length !== items.length) {
+    return items.map((item, idx) => ({ ...item, _origIdx: idx }));
+  }
+  return order.map(origIdx => ({ ...items[origIdx], _origIdx: origIdx }));
+}
+
+function initSortable(sectorKey) {
+  const el = document.getElementById(`sortable-list-${sectorKey}`);
+  if (!el || !window.Sortable) return;
+  Sortable.create(el, {
+    handle: '.drag-handle',
+    animation: 180,
+    ghostClass: 'sortable-ghost',
+    dragClass: 'sortable-drag',
+    delay: 80,
+    delayOnTouchOnly: true,
+    touchStartThreshold: 4,
+    forceFallback: false,
+    onEnd: function(evt) {
+      const items = CHECKLIST_DATA[sectorKey] || [];
+      // Rebuild order from DOM
+      const cards = el.querySelectorAll('.item-card');
+      const newOrder = Array.from(cards).map(c => parseInt(c.dataset.origIdx));
+      sectorOrder[sectorKey] = newOrder;
+      saveOrder();
+    }
+  });
+}
+
+// ===================== INTERACTIONS =====================
+function toggleCard(idx) {
+  const card = document.getElementById(`card-${idx}`);
+  const isOpen = card.classList.contains('open');
+  document.querySelectorAll('.item-card.open').forEach(c => c.classList.remove('open'));
+  if (!isOpen) card.classList.add('open');
+}
+
+function toggleCardIfNotDrag(event, idx) {
+  if (event.target.classList.contains('drag-handle')) return;
+  toggleCard(idx);
+}
+
+function setStatus(idx, status) {
+  const st = getItemState(currentSector, idx);
+  // Toggle off if same
+  if (st.status === status) {
+    st.status = null;
+  } else {
+    st.status = status;
+  }
+  saveState();
+
+  // Update card UI
+  const card = document.getElementById(`card-${idx}`);
+  const btnOk = document.getElementById(`btn-ok-${idx}`);
+  const btnNok = document.getElementById(`btn-nok-${idx}`);
+  const indicator = card.querySelector('.item-status-indicator');
+
+  card.classList.remove('status-ok', 'status-nok', 'status-pending');
+  btnOk.classList.remove('active');
+  btnNok.classList.remove('active');
+  indicator.classList.remove('ok', 'nok', 'pending');
+
+  if (st.status === 'ok') {
+    card.classList.add('status-ok');
+    btnOk.classList.add('active');
+    indicator.textContent = '✓';
+    indicator.classList.add('ok');
+  } else if (st.status === 'nok') {
+    card.classList.add('status-nok');
+    btnNok.classList.add('active');
+    indicator.textContent = '✗';
+    indicator.classList.add('nok');
+  } else {
+    card.classList.add('status-pending');
+    indicator.textContent = '○';
+    indicator.classList.add('pending');
+  }
+  updateProgress();
+}
+
+function saveObs(idx, value) {
+  const st = getItemState(currentSector, idx);
+  st.obs = value;
+  saveState();
+}
+
+function handlePhoto(idx, input) {
+  if (!input.files || !input.files[0]) return;
+  const file = input.files[0];
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const st = getItemState(currentSector, idx);
+    if (!st.photos) st.photos = [];
+    st.photos.push(e.target.result);
+    saveState();
+    const preview = document.getElementById(`photos-${idx}`);
+    if (preview) {
+      const img = document.createElement('img');
+      img.className = 'photo-thumb';
+      img.src = e.target.result;
+      preview.appendChild(img);
+    }
+  };
+  reader.readAsDataURL(file);
+}
+
+function openRefPhoto(idx) {
+  alert('💡 Link de referência não configurado.\n\nPara adicionar fotos de referência, insira a URL correspondente no campo de cada item.');
+}
+
+// ===================== PROGRESS =====================
+function updateProgress() {
+  if (!currentSector) return;
+  const items = CHECKLIST_DATA[currentSector] || [];
+  let ok = 0, nok = 0, pend = 0;
+  items.forEach((_, idx) => {
+    const st = getItemState(currentSector, idx);
+    if (st.status === 'ok') ok++;
+    else if (st.status === 'nok') nok++;
+    else pend++;
+  });
+  const total = items.length;
+  document.getElementById('p-ok').textContent = ok;
+  document.getElementById('p-nok').textContent = nok;
+  document.getElementById('p-pend').textContent = pend;
+  document.getElementById('progress-label').textContent = 
+    `${ok + nok} / ${total} avaliados`;
+  document.getElementById('prog-ok-bar').style.width = total > 0 ? (ok/total*100)+'%' : '0%';
+  document.getElementById('prog-nok-bar').style.width = total > 0 ? (nok/total*100)+'%' : '0%';
+}
+
+// ===================== MODAL =====================
+function openModal() {
+  const modal = document.getElementById('results-modal');
+  modal.classList.add('active');
+
+  // Collect stats across ALL sectors
+  let totalOk = 0, totalNok = 0, totalPend = 0;
+  Object.keys(CHECKLIST_DATA).forEach(sec => {
+    const items = CHECKLIST_DATA[sec] || [];
+    items.forEach((_, idx) => {
+      const s = getItemState(sec, idx);
+      if (s.status === 'ok') totalOk++;
+      else if (s.status === 'nok') totalNok++;
+      else totalPend++;
+    });
+  });
+
+  document.getElementById('modal-ok').textContent = totalOk;
+  document.getElementById('modal-nok').textContent = totalNok;
+  document.getElementById('modal-pend').textContent = totalPend;
+
+  // Chart
+  const ctx = document.getElementById('results-chart').getContext('2d');
+  if (chartInstance) chartInstance.destroy();
+  chartInstance = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: ['OK', 'NOK', 'Pendente'],
+      datasets: [{
+        data: [totalOk, totalNok, totalPend],
+        backgroundColor: ['#00c853', '#d50000', '#37474f'],
+        borderColor: ['#00c853', '#d50000', '#546e7a'],
+        borderWidth: 2,
+        hoverOffset: 8
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      cutout: '60%',
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: {
+            color: '#8899b0',
+            font: { family: 'Barlow', size: 13 },
+            padding: 16,
+            usePointStyle: true
+          }
+        },
+        tooltip: {
+          callbacks: {
+            label: function(ctx) {
+              const total = ctx.dataset.data.reduce((a,b) => a+b, 0);
+              const pct = total > 0 ? ((ctx.parsed / total) * 100).toFixed(1) : 0;
+              return ` ${ctx.label}: ${ctx.parsed} (${pct}%)`;
+            }
+          }
+        }
+      }
+    }
+  });
+}
+
+function closeModal() {
+  document.getElementById('results-modal').classList.remove('active');
+}
+
+function closeModalOutside(e) {
+  if (e.target === document.getElementById('results-modal')) closeModal();
+}
+
+// ===================== PDF GENERATION =====================
+async function generatePDF() {
+  closeModal();
+  showSendOverlay('Gerando PDF...', 'Preparando dados');
+
+  const { jsPDF } = window.jspdf;
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' });
+  const filename = `VCP_Suporte_${now.toISOString().slice(0,10)}.pdf`;
+
+  // ── 1. Collect data ──────────────────────────────────────
+  let allItems = [], totalOk = 0, totalNok = 0, totalPend = 0;
+  Object.keys(CHECKLIST_DATA).forEach(sec => {
+    (CHECKLIST_DATA[sec] || []).forEach((item, idx) => {
+      const s = getItemState(sec, idx);
+      if (s.status === 'ok') totalOk++;
+      else if (s.status === 'nok') totalNok++;
+      else totalPend++;
+      allItems.push({ sec, item, idx, s });
+    });
+  });
+  const total = allItems.length;
+  const okPct  = total > 0 ? ((totalOk / total) * 100).toFixed(1) : '0.0';
+  const nokPct = total > 0 ? ((totalNok / total) * 100).toFixed(1) : '0.0';
+  const pendPct= total > 0 ? ((totalPend / total) * 100).toFixed(1) : '0.0';
+
+  // ── 2. Render chart to PNG ───────────────────────────────
+  showSendOverlay('Gerando PDF...', 'Renderizando gráfico');
+  let chartDataUrl = null;
+  try {
+    const offCanvas = document.createElement('canvas');
+    offCanvas.width = 500; offCanvas.height = 320;
+    const ctx2 = offCanvas.getContext('2d');
+    ctx2.fillStyle = '#ffffff';
+    ctx2.fillRect(0, 0, 500, 320);
+    const tmpChart = new Chart(ctx2, {
+      type: 'doughnut',
+      data: {
+        labels: [`OK — ${okPct}%`, `NOK — ${nokPct}%`, `Pendente — ${pendPct}%`],
+        datasets: [{ data: [totalOk, totalNok, totalPend],
+          backgroundColor: ['#00c853','#d50000','#9e9e9e'],
+          borderColor: ['#00c853','#d50000','#bdbdbd'], borderWidth: 2 }]
+      },
+      options: {
+        responsive: false, animation: false, cutout: '58%',
+        plugins: {
+          legend: { position: 'bottom', labels: { color:'#333', font:{ size:13 }, padding:14, usePointStyle:true } },
+          tooltip: { enabled: false }
+        }
+      }
+    });
+    await new Promise(r => setTimeout(r, 400));
+    chartDataUrl = offCanvas.toDataURL('image/png');
+    tmpChart.destroy();
+  } catch(e) { console.warn('Chart render failed', e); }
+
+  // ── 3. Build PDF ─────────────────────────────────────────
+  showSendOverlay('Gerando PDF...', 'Montando páginas');
+  const doc = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
+  const PW = 210, PH = 297, ML = 14, MR = 14, usableW = PW - ML - MR;
+  let y = 0;
+
+  // helpers
+  const hex2rgb = h => { const r = parseInt(h.slice(1,3),16), g=parseInt(h.slice(3,5),16), b=parseInt(h.slice(5,7),16); return [r,g,b]; };
+  function setFill(hex)  { const [r,g,b] = hex2rgb(hex); doc.setFillColor(r,g,b); }
+  function setColor(hex) { const [r,g,b] = hex2rgb(hex); doc.setTextColor(r,g,b); }
+  function setDraw(hex)  { const [r,g,b] = hex2rgb(hex); doc.setDrawColor(r,g,b); }
+
+  function checkPage(needed = 10) {
+    if (y + needed > PH - 10) { doc.addPage(); y = 14; }
+  }
+
+  function sectionTitle(text, color = '#001e50') {
+    checkPage(12);
+    setFill(color); doc.setDrawColor(0,0,0); doc.setLineWidth(0);
+    doc.rect(ML, y, usableW, 7, 'F');
+    doc.setFont('helvetica','bold'); doc.setFontSize(10);
+    setColor('#ffffff');
+    doc.text(text, ML + 3, y + 5);
+    y += 9;
+  }
+
+  function wrapText(text, maxW, fontSize) {
+    doc.setFontSize(fontSize);
+    return doc.splitTextToSize(String(text || ''), maxW);
+  }
+
+  // ── PAGE 1: Header ───────────────────────────────────────
+  setFill('#001e50');
+  doc.rect(0, 0, PW, 28, 'F');
+  doc.setFont('helvetica','bold'); doc.setFontSize(18);
+  setColor('#ffffff');
+  doc.text('VCP Suporte Montagem', ML, 12);
+  doc.setFont('helvetica','normal'); doc.setFontSize(9);
+  setColor('#a0b4d0');
+  doc.text('Checklist de Riscos  —  ' + dateStr, ML, 19);
+  doc.text('Volkswagen do Brasil', PW - MR, 19, { align: 'right' });
+  y = 34;
+
+  // ── SUMMARY BOXES ────────────────────────────────────────
+  const bw = (usableW - 6) / 3;
+  const boxes = [
+    { label:'OK', value:totalOk, pct:okPct+'%', bg:'#e8f5e9', border:'#00c853', tc:'#1b5e20', vc:'#00c853' },
+    { label:'NOK', value:totalNok, pct:nokPct+'%', bg:'#ffebee', border:'#d50000', tc:'#b71c1c', vc:'#d50000' },
+    { label:'Pendente', value:totalPend, pct:pendPct+'%', bg:'#f5f5f5', border:'#9e9e9e', tc:'#424242', vc:'#757575' }
+  ];
+  boxes.forEach((b, i) => {
+    const x = ML + i * (bw + 3);
+    setFill(b.bg); setDraw(b.border);
+    doc.setLineWidth(0.6);
+    doc.roundedRect(x, y, bw, 18, 2, 2, 'FD');
+    doc.setFont('helvetica','bold'); doc.setFontSize(20);
+    setColor(b.vc);
+    doc.text(String(b.value), x + bw/2, y + 9, { align:'center' });
+    doc.setFontSize(8); setColor(b.tc);
+    doc.text(b.label + '  ' + b.pct, x + bw/2, y + 14.5, { align:'center' });
+  });
+  y += 22;
+
+  // ── CHART ────────────────────────────────────────────────
+  if (chartDataUrl) {
+    checkPage(72);
+    sectionTitle('Gráfico Percentual');
+    const chartW = 90, chartH = 58;
+    const cx = ML + (usableW - chartW) / 2;
+    setFill('#fafafa'); setDraw('#e0e0e0');
+    doc.setLineWidth(0.3);
+    doc.rect(ML, y, usableW, chartH + 6, 'FD');
+    doc.addImage(chartDataUrl, 'PNG', cx, y + 3, chartW, chartH);
+    y += chartH + 10;
+  }
+
+  // ── NOK ITEMS TABLE ──────────────────────────────────────
+  const nokItems = allItems.filter(x => x.s.status === 'nok');
+  sectionTitle(`Itens NOK  (${nokItems.length})`, '#c62828');
+
+  if (nokItems.length === 0) {
+    checkPage(10);
+    doc.setFont('helvetica','italic'); doc.setFontSize(9); setColor('#888888');
+    doc.text('Nenhum item NOK registrado.', ML + 3, y + 5); y += 10;
+  } else {
+    // Table header
+    const cols = { setor:20, item:12, op:62, modelo:30, obs:58 };
+    const rowH = 6.5;
+    const drawTableHeader = () => {
+      checkPage(10);
+      setFill('#c62828'); doc.rect(ML, y, usableW, rowH, 'F');
+      doc.setFont('helvetica','bold'); doc.setFontSize(7.5); setColor('#ffffff');
+      let cx2 = ML + 1.5;
+      ['Setor','Item','Operação','Modelo','Observação'].forEach((h, i) => {
+        const w = Object.values(cols)[i];
+        doc.text(h, cx2, y + 4.5); cx2 += w;
+      });
+      y += rowH;
+    };
+    drawTableHeader();
+
+    nokItems.forEach((x, ri) => {
+      // Calc row height (may need wrapping for long text)
+      const opLines  = wrapText(x.item.operacao || '', cols.op - 2, 7.5);
+      const obsLines = wrapText(x.s.obs || '', cols.obs - 2, 7.5);
+      const maxLines = Math.max(opLines.length, obsLines.length, 1);
+      const rh = Math.max(rowH, maxLines * 3.8 + 2);
+
+      checkPage(rh + 2);
+      // Row bg
+      setFill(ri % 2 === 0 ? '#fff5f5' : '#ffffff');
+      doc.rect(ML, y, usableW, rh, 'F');
+      setDraw('#f5c6c6'); doc.setLineWidth(0.2);
+      doc.rect(ML, y, usableW, rh, 'D');
+
+      doc.setFont('helvetica','normal'); doc.setFontSize(7.5); setColor('#333333');
+      let cx2 = ML + 1.5;
+      const cells = [
+        { text: x.sec, w: cols.setor },
+        { text: '#' + x.item.id, w: cols.item },
+        { text: x.item.operacao || '', w: cols.op },
+        { text: x.item.modelo || '', w: cols.modelo },
+        { text: x.s.obs || '—', w: cols.obs }
+      ];
+      cells.forEach(cell => {
+        const lines = wrapText(cell.text, cell.w - 2, 7.5);
+        doc.text(lines, cx2, y + 4); cx2 += cell.w;
+      });
+
+      // Photos for NOK item
+      const photos = x.s.photos || [];
+      if (photos.length > 0) {
+        y += rh;
+        checkPage(28);
+        doc.setFont('helvetica','bolditalic'); doc.setFontSize(7); setColor('#9e0000');
+        doc.text('  Fotos:', ML + 2, y + 4);
+        let px = ML + 16;
+        photos.forEach(src => {
+          try {
+            if (px + 22 > PW - MR) { y += 24; px = ML + 16; checkPage(24); }
+            doc.addImage(src, 'JPEG', px, y, 20, 20);
+            px += 22;
+          } catch(e) {}
+        });
+        y += 24;
+      } else {
+        y += rh;
+      }
+    });
+    y += 3;
+  }
+
+  // ── OK ITEMS WITH OBS/PHOTOS ─────────────────────────────
+  const okExtras = allItems.filter(x => x.s.status === 'ok' && (x.s.obs || (x.s.photos && x.s.photos.length > 0)));
+  if (okExtras.length > 0) {
+    checkPage(16);
+    sectionTitle(`Itens OK com Observações / Fotos  (${okExtras.length})`, '#2e7d32');
+    const rowH2 = 6.5;
+    const drawOkHeader = () => {
+      checkPage(10);
+      setFill('#2e7d32'); doc.rect(ML, y, usableW, rowH2, 'F');
+      doc.setFont('helvetica','bold'); doc.setFontSize(7.5); setColor('#ffffff');
+      let cx2 = ML + 1.5;
+      [['Setor',20],['Item',12],['Operação',72],['Observação',78]].forEach(([h,w]) => {
+        doc.text(h, cx2, y + 4.5); cx2 += w;
+      });
+      y += rowH2;
+    };
+    drawOkHeader();
+    okExtras.forEach((x, ri) => {
+      const obsLines = wrapText(x.s.obs || '', 76, 7.5);
+      const opLines  = wrapText(x.item.operacao || '', 70, 7.5);
+      const maxL = Math.max(opLines.length, obsLines.length, 1);
+      const rh = Math.max(rowH2, maxL * 3.8 + 2);
+      checkPage(rh + 2);
+      setFill(ri % 2 === 0 ? '#f5fff8' : '#ffffff'); doc.rect(ML, y, usableW, rh, 'F');
+      setDraw('#c8e6c9'); doc.setLineWidth(0.2); doc.rect(ML, y, usableW, rh, 'D');
+      doc.setFont('helvetica','normal'); doc.setFontSize(7.5); setColor('#333333');
+      let cx2 = ML + 1.5;
+      [[x.sec,20],['#'+x.item.id,12],[x.item.operacao||'',72],[x.s.obs||'—',78]].forEach(([t,w]) => {
+        doc.text(wrapText(t, w-2, 7.5), cx2, y + 4); cx2 += w;
+      });
+      const photos = x.s.photos || [];
+      if (photos.length > 0) {
+        y += rh;
+        checkPage(28);
+        doc.setFont('helvetica','bolditalic'); doc.setFontSize(7); setColor('#1b5e20');
+        doc.text('  Fotos:', ML + 2, y + 4);
+        let px = ML + 16;
+        photos.forEach(src => {
+          try {
+            if (px + 22 > PW - MR) { y += 24; px = ML + 16; checkPage(24); }
+            doc.addImage(src, 'JPEG', px, y, 20, 20);
+            px += 22;
+          } catch(e) {}
+        });
+        y += 24;
+      } else {
+        y += rh;
+      }
+    });
+    y += 3;
+  }
+
+  // ── FULL DETAIL PER SECTOR ───────────────────────────────
+  checkPage(16);
+  sectionTitle('Detalhamento Completo por Setor', '#001e50');
+
+  Object.keys(CHECKLIST_DATA).forEach(sec => {
+    const items = CHECKLIST_DATA[sec] || [];
+    if (!items.length) return;
+    checkPage(14);
+
+    // Sector sub-header
+    setFill('#1565c0'); doc.rect(ML, y, usableW, 6, 'F');
+    doc.setFont('helvetica','bold'); doc.setFontSize(8.5); setColor('#ffffff');
+    doc.text(`Setor ${sec}  (${items.length} itens)`, ML + 2, y + 4.2);
+    y += 7;
+
+    // column header
+    const rHdr = 5.5;
+    setFill('#e3eaf5'); doc.rect(ML, y, usableW, rHdr, 'F');
+    setDraw('#c0cfe0'); doc.setLineWidth(0.2); doc.rect(ML, y, usableW, rHdr, 'D');
+    doc.setFont('helvetica','bold'); doc.setFontSize(7); setColor('#001e50');
+    const detCols = [[12,'Item'],[52,'Operação'],[28,'Modelo'],[16,'Status'],[74,'Observação']];
+    let cx2 = ML + 1.5;
+    detCols.forEach(([w,h]) => { doc.text(h, cx2, y + 3.8); cx2 += w; });
+    y += rHdr;
+
+    items.forEach((item, idx) => {
+      const s = getItemState(sec, idx);
+      const stText = s.status === 'ok' ? 'OK' : s.status === 'nok' ? 'NOK' : '—';
+      const stColor = s.status === 'ok' ? '#00c853' : s.status === 'nok' ? '#d50000' : '#9e9e9e';
+      const rowBg = s.status === 'ok' ? '#f5fff8' : s.status === 'nok' ? '#fff5f5' : '#fafafa';
+      const obsLines = wrapText(s.obs || '', 72, 7);
+      const opLines  = wrapText(item.operacao || item.descricao || '', 50, 7);
+      const rh = Math.max(5.5, Math.max(opLines.length, obsLines.length, 1) * 3.4 + 2);
+
+      checkPage(rh + 1);
+      setFill(rowBg); doc.rect(ML, y, usableW, rh, 'F');
+      setDraw('#e0e0e0'); doc.setLineWidth(0.15); doc.rect(ML, y, usableW, rh, 'D');
+
+      doc.setFont('helvetica','normal'); doc.setFontSize(7); setColor('#333333');
+      cx2 = ML + 1.5;
+      [['#'+item.id,12],[item.operacao||item.descricao||'',52],[item.modelo||'',28]].forEach(([t,w]) => {
+        doc.text(wrapText(t, w-2, 7), cx2, y + 3.8); cx2 += w;
+      });
+      // Status badge
+      doc.setFont('helvetica','bold'); doc.setFontSize(7.5);
+      setColor(stColor);
+      doc.text(stText, cx2 + 8, y + 3.8, { align:'center' }); cx2 += 16;
+      doc.setFont('helvetica','normal'); doc.setFontSize(7); setColor('#333333');
+      doc.text(obsLines, cx2, y + 3.8);
+      y += rh;
+
+      // Inline photos for NOK in detail
+      if (s.status === 'nok' && s.photos && s.photos.length > 0) {
+        checkPage(26);
+        let px2 = ML + 18;
+        doc.setFont('helvetica','bolditalic'); doc.setFontSize(6.5); setColor('#9e0000');
+        doc.text('Fotos:', ML + 2, y + 4);
+        s.photos.forEach(src => {
+          try {
+            if (px2 + 20 > PW - MR) { y += 22; px2 = ML + 18; checkPage(22); }
+            doc.addImage(src, 'JPEG', px2, y, 18, 18);
+            px2 += 20;
+          } catch(e) {}
+        });
+        y += 22;
+      }
+    });
+    y += 4;
+  });
+
+  // ── FOOTER on all pages ──────────────────────────────────
+  const pageCount = doc.getNumberOfPages();
+  for (let p = 1; p <= pageCount; p++) {
+    doc.setPage(p);
+    setFill('#f0f2f5'); doc.rect(0, PH - 9, PW, 9, 'F');
+    doc.setFont('helvetica','normal'); doc.setFontSize(7); setColor('#888888');
+    doc.text(`Gerado em ${now.toLocaleString('pt-BR')}  ·  VCP Suporte Montagem  ·  Volkswagen do Brasil`, ML, PH - 3.5);
+    doc.text(`${p} / ${pageCount}`, PW - MR, PH - 3.5, { align:'right' });
+  }
+
+  hideSendOverlay();
+  doc.save(filename);
+}
+
+// ===================== SETTINGS =====================
+let emailCfg = { recipients: '' };
+
+function loadEmailConfig() {
+  try {
+    const saved = localStorage.getItem('vcp_email_cfg_v2');
+    if (saved) emailCfg = { ...emailCfg, ...JSON.parse(saved) };
+  } catch(e) {}
+}
+
+function saveEmailSettings() {
+  emailCfg.recipients = document.getElementById('cfg-recipients').value.trim();
+  localStorage.setItem('vcp_email_cfg_v2', JSON.stringify(emailCfg));
+  updateConfigStatus();
+  closeSettings();
+  alert('✅ Destinatários salvos!');
+}
+
+function isEmailConfigured() {
+  return !!emailCfg.recipients;
+}
+
+function updateConfigStatus() {
+  const box = document.getElementById('config-status-box');
+  if (!box) return;
+  if (isEmailConfigured()) {
+    box.innerHTML = `<div class="config-status ok">✓ Enviará para: ${emailCfg.recipients}</div>`;
+  } else {
+    box.innerHTML = `<div class="config-status not-ok">⚠️ Informe os e-mails destinatários abaixo.</div>`;
+  }
+}
+
+function openSettings() {
+  closeModal();
+  loadEmailConfig();
+  document.getElementById('cfg-recipients').value = emailCfg.recipients || '';
+  updateConfigStatus();
+  document.getElementById('settings-modal').classList.add('active');
+}
+
+function closeSettings() {
+  document.getElementById('settings-modal').classList.remove('active');
+}
+
+function closeSettingsOutside(e) {
+  if (e.target === document.getElementById('settings-modal')) closeSettings();
+}
+
+// ===================== EMAIL =====================
+function showSendOverlay(text, sub) {
+  document.getElementById('send-status-text').textContent = text;
+  document.getElementById('send-status-sub').textContent = sub || '';
+  document.getElementById('send-overlay').classList.add('active');
+}
+function hideSendOverlay() {
+  document.getElementById('send-overlay').classList.remove('active');
+}
+
+async function sendEmail() {
+  closeModal();
+  loadEmailConfig();
+
+  if (!isEmailConfigured()) {
+    const go = confirm('⚙️ E-mail não configurado.\n\nDeseja abrir as configurações agora?');
+    if (go) openSettings();
+    return;
+  }
+
+  showSendOverlay('Capturando gráfico...', 'Aguarde');
+
+  // ── 1. Coletar dados ─────────────────────────────
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' });
+  const dateShort = now.toLocaleString('pt-BR');
+
+  let allItems = [], totalOk = 0, totalNok = 0, totalPend = 0;
+  Object.keys(CHECKLIST_DATA).forEach(sec => {
+    (CHECKLIST_DATA[sec] || []).forEach((item, idx) => {
+      const s = getItemState(sec, idx);
+      if (s.status === 'ok') totalOk++;
+      else if (s.status === 'nok') totalNok++;
+      else totalPend++;
+      allItems.push({ sec, item, idx, s });
+    });
+  });
+
+  const total = allItems.length;
+  const okPct  = total > 0 ? ((totalOk  / total) * 100).toFixed(1) : '0.0';
+  const nokPct = total > 0 ? ((totalNok / total) * 100).toFixed(1) : '0.0';
+  const pendPct= total > 0 ? ((totalPend/ total) * 100).toFixed(1) : '0.0';
+
+  // ── 2. Capturar gráfico como PNG ─────────────────
+  let chartImgTag = '';
+  try {
+    // Render chart to off-screen canvas
+    const offCanvas = document.createElement('canvas');
+    offCanvas.width  = 420;
+    offCanvas.height = 280;
+    const ctx = offCanvas.getContext('2d');
+    new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: [`OK (${okPct}%)`, `NOK (${nokPct}%)`, `Pendente (${pendPct}%)`],
+        datasets: [{
+          data: [totalOk, totalNok, totalPend],
+          backgroundColor: ['#00c853', '#d50000', '#78909c'],
+          borderColor: ['#00c853', '#d50000', '#90a4ae'],
+          borderWidth: 2
+        }]
+      },
+      options: {
+        responsive: false,
+        animation: false,
+        cutout: '60%',
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: { color: '#333', font: { size: 12 }, padding: 12, usePointStyle: true }
+          },
+          tooltip: { enabled: false }
+        }
+      }
+    });
+    await new Promise(r => setTimeout(r, 350)); // leave time to render
+    const imgData = offCanvas.toDataURL('image/png');
+    chartImgTag = `<img src="${imgData}" alt="Gráfico" style="display:block;max-width:380px;width:100%;margin:0 auto;">`;
+  } catch(e) {
+    chartImgTag = '<p style="color:#888;font-size:12px;text-align:center;">[Gráfico não disponível]</p>';
+  }
+
+  showSendOverlay('Construindo e-mail...', 'Incluindo observações e fotos');
+
+  // ── 3. Montar seção NOK com obs + fotos ──────────
+  const nokItems = allItems.filter(x => x.s.status === 'nok');
+  let nokRowsHtml = '';
+  if (nokItems.length === 0) {
+    nokRowsHtml = `<tr><td colspan="6" style="padding:14px;text-align:center;color:#888;font-size:12px;">Nenhum item NOK registrado ✓</td></tr>`;
+  } else {
+    nokItems.forEach(x => {
+      const photos = (x.s.photos || []);
+      const photoHtml = photos.length > 0
+        ? photos.map(src => `<img src="${src}" style="width:70px;height:70px;object-fit:cover;border-radius:6px;border:1px solid #ddd;margin:2px;">`).join('')
+        : '<span style="color:#bbb;font-size:11px;">—</span>';
+      nokRowsHtml += `
+        <tr style="background:#fff5f5;">
+          <td style="padding:7px 8px;border:1px solid #f5c6c6;font-size:11px;color:#555;">${x.sec}</td>
+          <td style="padding:7px 8px;border:1px solid #f5c6c6;font-size:11px;">#${x.item.id}</td>
+          <td style="padding:7px 8px;border:1px solid #f5c6c6;font-size:11px;">${x.item.operacao||''}</td>
+          <td style="padding:7px 8px;border:1px solid #f5c6c6;font-size:11px;">${x.item.modelo||''}</td>
+          <td style="padding:7px 8px;border:1px solid #f5c6c6;font-size:11px;color:#c62828;">${x.s.obs || '—'}</td>
+          <td style="padding:7px 8px;border:1px solid #f5c6c6;">${photoHtml}</td>
+        </tr>`;
+    });
+  }
+
+  // ── 4. Montar seção OK com obs/fotos (se houver) ─
+  let okWithExtrasHtml = '';
+  const okWithExtras = allItems.filter(x => x.s.status === 'ok' && (x.s.obs || (x.s.photos && x.s.photos.length > 0)));
+  if (okWithExtras.length > 0) {
+    let rows = '';
+    okWithExtras.forEach(x => {
+      const photos = (x.s.photos || []);
+      const photoHtml = photos.length > 0
+        ? photos.map(src => `<img src="${src}" style="width:65px;height:65px;object-fit:cover;border-radius:5px;border:1px solid #ddd;margin:2px;">`).join('')
+        : '';
+      rows += `
+        <tr style="background:#f5fff8;">
+          <td style="padding:6px 8px;border:1px solid #c8e6c9;font-size:11px;color:#555;">${x.sec}</td>
+          <td style="padding:6px 8px;border:1px solid #c8e6c9;font-size:11px;">#${x.item.id}</td>
+          <td style="padding:6px 8px;border:1px solid #c8e6c9;font-size:11px;">${x.item.operacao||''}</td>
+          <td style="padding:6px 8px;border:1px solid #c8e6c9;font-size:11px;color:#2e7d32;">${x.s.obs || '—'}</td>
+          <td style="padding:6px 8px;border:1px solid #c8e6c9;">${photoHtml}</td>
+        </tr>`;
+    });
+    okWithExtrasHtml = `
+      <h3 style="font-size:14px;font-weight:700;color:#1b5e20;border-bottom:2px solid #1b5e20;padding-bottom:6px;margin:20px 0 10px;">✓ Itens OK com observações / fotos</h3>
+      <table style="width:100%;border-collapse:collapse;margin-bottom:20px;">
+        <thead>
+          <tr style="background:#2e7d32;color:#fff;">
+            <th style="padding:6px 8px;border:1px solid #c8e6c9;font-size:10px;text-align:left;">Setor</th>
+            <th style="padding:6px 8px;border:1px solid #c8e6c9;font-size:10px;text-align:left;">Item</th>
+            <th style="padding:6px 8px;border:1px solid #c8e6c9;font-size:10px;text-align:left;">Operação</th>
+            <th style="padding:6px 8px;border:1px solid #c8e6c9;font-size:10px;text-align:left;">Observação</th>
+            <th style="padding:6px 8px;border:1px solid #c8e6c9;font-size:10px;text-align:left;">Fotos</th>
+          </tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>`;
+  }
+
+  // ── 5. Montar HTML completo do email ─────────────
+  const htmlBody = `
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<body style="margin:0;padding:0;background:#f0f2f5;font-family:Arial,sans-serif;">
+<div style="max-width:680px;margin:0 auto;background:#fff;">
+
+  <!-- HEADER -->
+  <div style="background:linear-gradient(135deg,#001e50 0%,#002575 100%);padding:24px 24px 18px;">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <div style="width:44px;height:44px;border:2.5px solid #fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;color:#fff;background:rgba(255,255,255,0.1);flex-shrink:0;text-align:center;line-height:44px;">VW</div>
+      <div>
+        <div style="font-size:20px;font-weight:700;color:#fff;letter-spacing:0.5px;">VCP Suporte Montagem</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.65);letter-spacing:0.8px;text-transform:uppercase;">Checklist de Riscos</div>
+      </div>
+    </div>
+    <div style="margin-top:12px;font-size:12px;color:rgba(255,255,255,0.55);">${dateStr}</div>
+  </div>
+
+  <!-- STATS -->
+  <div style="padding:20px 20px 0;">
+    <h2 style="font-size:15px;font-weight:700;color:#001e50;margin:0 0 12px;border-bottom:2px solid #001e50;padding-bottom:6px;">📊 Resumo Geral</h2>
+    <table style="width:100%;border-collapse:collapse;">
+      <tr>
+        <td style="width:33%;padding:4px;">
+          <div style="background:#e8f5e9;border:2px solid #00c853;border-radius:8px;padding:14px;text-align:center;">
+            <div style="font-size:36px;font-weight:800;color:#00c853;line-height:1;">${totalOk}</div>
+            <div style="font-size:13px;font-weight:700;color:#00c853;margin-top:2px;">OK</div>
+            <div style="font-size:12px;color:#555;margin-top:2px;">${okPct}%</div>
+          </div>
+        </td>
+        <td style="width:33%;padding:4px;">
+          <div style="background:#ffebee;border:2px solid #d50000;border-radius:8px;padding:14px;text-align:center;">
+            <div style="font-size:36px;font-weight:800;color:#d50000;line-height:1;">${totalNok}</div>
+            <div style="font-size:13px;font-weight:700;color:#d50000;margin-top:2px;">NOK</div>
+            <div style="font-size:12px;color:#555;margin-top:2px;">${nokPct}%</div>
+          </div>
+        </td>
+        <td style="width:33%;padding:4px;">
+          <div style="background:#f5f5f5;border:2px solid #bdbdbd;border-radius:8px;padding:14px;text-align:center;">
+            <div style="font-size:36px;font-weight:800;color:#757575;line-height:1;">${totalPend}</div>
+            <div style="font-size:13px;font-weight:700;color:#757575;margin-top:2px;">Pendente</div>
+            <div style="font-size:12px;color:#555;margin-top:2px;">${pendPct}%</div>
+          </div>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- CHART -->
+  <div style="padding:20px 20px 0;">
+    <h2 style="font-size:15px;font-weight:700;color:#001e50;margin:0 0 12px;border-bottom:2px solid #001e50;padding-bottom:6px;">📈 Gráfico Percentual</h2>
+    <div style="background:#fafafa;border-radius:10px;padding:16px;border:1px solid #e8e8e8;text-align:center;">
+      ${chartImgTag}
+      <div style="margin-top:8px;font-size:11px;color:#888;">
+        Total de itens avaliados: <b>${total}</b> &nbsp;|&nbsp; 
+        OK: <b>${totalOk} (${okPct}%)</b> &nbsp;|&nbsp; 
+        NOK: <b>${totalNok} (${nokPct}%)</b> &nbsp;|&nbsp; 
+        Pendente: <b>${totalPend} (${pendPct}%)</b>
+      </div>
+    </div>
+  </div>
+
+  <!-- NOK ITEMS -->
+  <div style="padding:20px 20px 0;">
+    <h2 style="font-size:15px;font-weight:700;color:#c62828;border-bottom:2px solid #c62828;padding-bottom:6px;margin:0 0 10px;">✗ Itens NOK — Observações e Fotos</h2>
+    <table style="width:100%;border-collapse:collapse;margin-bottom:8px;">
+      <thead>
+        <tr style="background:#c62828;color:#fff;">
+          <th style="padding:7px 8px;border:1px solid #f5c6c6;font-size:10px;text-align:left;">Setor</th>
+          <th style="padding:7px 8px;border:1px solid #f5c6c6;font-size:10px;text-align:left;">Item</th>
+          <th style="padding:7px 8px;border:1px solid #f5c6c6;font-size:10px;text-align:left;">Operação</th>
+          <th style="padding:7px 8px;border:1px solid #f5c6c6;font-size:10px;text-align:left;">Modelo</th>
+          <th style="padding:7px 8px;border:1px solid #f5c6c6;font-size:10px;text-align:left;">Observação</th>
+          <th style="padding:7px 8px;border:1px solid #f5c6c6;font-size:10px;text-align:left;">Fotos</th>
+        </tr>
+      </thead>
+      <tbody>${nokRowsHtml}</tbody>
+    </table>
+  </div>
+
+  ${okWithExtrasHtml ? `<div style="padding:0 20px;">${okWithExtrasHtml}</div>` : ''}
+
+  <!-- FOOTER -->
+  <div style="background:#f8f9fb;border-top:1px solid #e8e8e8;padding:14px 20px;margin-top:24px;">
+    <div style="font-size:11px;color:#999;text-align:center;">
+      Gerado automaticamente em ${dateShort}<br>
+      VCP Suporte Montagem · Volkswagen do Brasil
+    </div>
+  </div>
+</div>
+</body>
+</html>`;
+
+  // ── 6. Enviar via Netlify Function ───────────────
+  showSendOverlay('Enviando e-mail...', emailCfg.recipients);
+  try {
+    const resp = await fetch('/.netlify/functions/send-email', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        to: emailCfg.recipients,
+        subject: `VCP Suporte Montagem — Checklist ${now.toLocaleDateString('pt-BR')} | OK: ${totalOk} | NOK: ${totalNok}`,
+        html: htmlBody
+      })
+    });
+    const result = await resp.json();
+    hideSendOverlay();
+    if (resp.ok) {
+      alert(`✅ E-mail enviado!\n\nDestinatário(s): ${emailCfg.recipients}\nOK: ${totalOk} (${okPct}%) | NOK: ${totalNok} (${nokPct}%) | Pendente: ${totalPend}`);
+    } else {
+      alert(`❌ Falha ao enviar e-mail.\n\nErro: ${result.error || 'Desconhecido'}\n\n💡 Verifique as variáveis SMTP no painel Netlify.`);
+    }
+  } catch(err) {
+    hideSendOverlay();
+    alert(`❌ Erro de conexão.\n\nVerifique se o site está publicado no Netlify.\nDetalhe: ${err.message}`);
+  }
+}
+</script>
+
+</body>
+</html>
