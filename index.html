@@ -290,22 +290,23 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 32px;
-    height: 32px;
+    width: 36px;
+    height: 44px;
     flex-shrink: 0;
     cursor: grab;
-    color: #2a3f5f;
-    font-size: 18px;
+    color: #3a5270;
+    font-size: 20px;
     touch-action: none;
     border-radius: 6px;
     transition: color 0.15s, background 0.15s;
-    margin-top: 0;
     -webkit-user-select: none;
     user-select: none;
+    letter-spacing: 2px;
   }
-  .drag-handle:active { cursor: grabbing; color: var(--text-secondary); background: rgba(255,255,255,0.06); }
-  .sortable-ghost { opacity: 0.35; }
-  .sortable-drag { opacity: 0.95; box-shadow: 0 12px 40px rgba(0,0,0,0.7); }
+  .drag-handle:active { cursor: grabbing; color: var(--vw-light-blue); background: rgba(0,64,193,0.1); }
+  .sortable-ghost  { opacity: 0.3; background: rgba(0,64,193,0.08) !important; border-color: var(--vw-light-blue) !important; }
+  .sortable-drag   { opacity: 1; box-shadow: 0 16px 48px rgba(0,0,0,0.8) !important; z-index: 9999; }
+  .sortable-chosen { background: rgba(0,64,193,0.05) !important; }
   .reorder-hint {
     display: flex;
     align-items: center;
@@ -374,64 +375,6 @@
   }
   .obs-textarea:focus { outline: none; border-color: var(--vw-light-blue); }
   .obs-textarea::placeholder { color: #3a4f66; }
-
-  /* PHOTO */
-  .photo-section { margin-bottom: 10px; }
-  .photo-label {
-    font-size: 11px;
-    color: var(--text-secondary);
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-    margin-bottom: 6px;
-    font-weight: 600;
-    display: block;
-  }
-  .photo-upload-btn {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background: #0d1526;
-    border: 1.5px dashed #2a3f5f;
-    border-radius: 7px;
-    padding: 10px 12px;
-    color: var(--text-secondary);
-    font-size: 13px;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  .photo-upload-btn:hover { border-color: var(--vw-light-blue); color: var(--text-primary); }
-  .photo-upload-btn .upload-icon { font-size: 18px; }
-  input[type="file"] { display: none; }
-  .photo-preview {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    margin-top: 8px;
-  }
-  .photo-thumb {
-    width: 64px;
-    height: 64px;
-    object-fit: cover;
-    border-radius: 6px;
-    border: 2px solid var(--card-border);
-  }
-
-  /* REFERENCE LINK */
-  .ref-link {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 11px;
-    color: #4a90d9;
-    text-decoration: none;
-    padding: 6px 10px;
-    background: rgba(74,144,217,0.08);
-    border-radius: 5px;
-    margin-top: 6px;
-    border: 1px solid rgba(74,144,217,0.2);
-  }
-  .ref-link:hover { background: rgba(74,144,217,0.15); }
-  .ref-icon { font-size: 14px; }
 
   /* FLOATING ACTION */
   .floating-bottom {
@@ -863,7 +806,7 @@
         <span>📧</span> Enviar por E-mail
       </button>
       <button class="btn-modal-action btn-modal-settings" onclick="openSettings()">
-        <span>⚙️</span> Config. E-mail
+        <span>⚙️</span> Config. E-mail / PA
       </button>
       <button class="btn-modal-action btn-modal-close" onclick="closeModal()">
         Fechar
@@ -877,28 +820,36 @@
   <div class="settings-sheet">
     <div class="modal-handle"></div>
     <div class="settings-title">⚙️ Configuração de E-mail</div>
-    <div class="settings-subtitle">O envio é feito via Netlify Functions (SMTP). Configure as variáveis de ambiente no painel Netlify.</div>
+    <div class="settings-subtitle">O envio usa um fluxo do <b>Power Automate</b> — sem serviços externos. Tudo fica dentro da rede Microsoft 365 da empresa.</div>
 
     <div id="config-status-box"></div>
 
     <div class="settings-field">
-      <label>Destinatários (separados por vírgula)</label>
-      <input class="settings-input" id="cfg-recipients" type="email" autocomplete="email" placeholder="email1@vw.com, email2@vw.com" inputmode="email">
+      <label>URL do Fluxo Power Automate</label>
+      <input class="settings-input" id="cfg-flow-url" type="url" autocomplete="off"
+        placeholder="https://prod-xx.westus.logic.azure.com/workflows/...">
+      <div class="settings-hint">Cole aqui a URL gerada pelo gatilho HTTP do Power Automate. Veja o guia CONFIGURACAO.md.</div>
+    </div>
+
+    <div class="settings-field">
+      <label>Destinatários (separados por ponto-e-vírgula)</label>
+      <input class="settings-input" id="cfg-recipients" type="text" autocomplete="off"
+        placeholder="alan@vw.com; joao@vw.com" inputmode="email">
     </div>
 
     <div style="background:#0a0e1a;border-radius:8px;padding:12px;margin-bottom:14px;border:1px solid #1e2d47;">
-      <div style="font-size:11px;font-weight:700;color:#f59e0b;letter-spacing:0.5px;margin-bottom:8px;text-transform:uppercase;">⚙️ Variáveis no Netlify</div>
+      <div style="font-size:11px;font-weight:700;color:#00b4d8;letter-spacing:0.5px;margin-bottom:8px;text-transform:uppercase;">📋 Payload enviado ao Power Automate</div>
       <div style="font-size:10px;color:#8899b0;line-height:1.9;font-family:monospace;background:#070b14;padding:10px;border-radius:6px;">
-        SMTP_HOST=smtp.gmail.com<br>
-        SMTP_PORT=587<br>
-        SMTP_USER=seu@gmail.com<br>
-        SMTP_PASS=sua_senha_de_app<br>
-        SMTP_FROM=VCP Montagem &lt;seu@gmail.com&gt;
+        {<br>
+        &nbsp;&nbsp;"to": "email1; email2",<br>
+        &nbsp;&nbsp;"subject": "VCP Checklist — ...",<br>
+        &nbsp;&nbsp;"html": "&lt;html completo do relatório&gt;"<br>
+        }
       </div>
-      <div style="font-size:10px;color:#4a6380;margin-top:6px;">Painel Netlify → Site → Site configuration → Environment variables</div>
+      <div style="font-size:10px;color:#4a6380;margin-top:6px;">No Power Automate: usar ação <b>"Enviar um email (V2)"</b> do Outlook 365.</div>
     </div>
 
-    <button class="btn-settings-save" onclick="saveEmailSettings()">💾 Salvar Destinatários</button>
+    <button class="btn-settings-save" onclick="saveEmailSettings()">💾 Salvar Configurações</button>
     <button class="btn-settings-close" onclick="closeSettings()">Fechar</button>
   </div>
 </div>
@@ -3542,7 +3493,7 @@ function saveState() {
 
 function getItemState(sector, idx) {
   if (!state[sector]) state[sector] = {};
-  if (!state[sector][idx]) state[sector][idx] = { status: null, obs: '', photos: [] };
+  if (!state[sector][idx]) state[sector][idx] = { status: null, obs: '' };
   return state[sector][idx];
 }
 
@@ -3592,7 +3543,7 @@ function renderItem(item, idx, sector) {
   return `
     <div class="item-card ${statusClass}" id="card-${idx}" data-idx="${idx}" data-orig-idx="${idx}">
       <div class="item-header" onclick="toggleCardIfNotDrag(event, ${idx})">
-        <div class="drag-handle" onpointerdown="event.stopPropagation()" title="Arrastar para reordenar">⠿</div>
+        <div class="drag-handle" title="Arrastar para reordenar">⠿</div>
         <div class="item-number">#${item.id}</div>
         <div class="item-info">
           <div class="item-operacao">${esc(item.operacao) || esc(item.descricao)}</div>
@@ -3618,20 +3569,7 @@ function renderItem(item, idx, sector) {
         <div class="obs-label">Observações</div>
         <textarea class="obs-textarea" id="obs-${idx}" placeholder="Registre observações aqui..." 
           oninput="saveObs(${idx}, this.value)">${esc(st.obs)}</textarea>
-        <div class="photo-section">
-          <span class="photo-label">📷 Foto do item</span>
-          <label class="photo-upload-btn" for="photo-${idx}">
-            <span class="upload-icon">📷</span>
-            <span>Tirar/Adicionar Foto</span>
-          </label>
-          <input type="file" id="photo-${idx}" accept="image/*" capture="environment" 
-            onchange="handlePhoto(${idx}, this)">
-          <div class="photo-preview" id="photos-${idx}"></div>
-        </div>
-        <a class="ref-link" href="#" onclick="openRefPhoto(${idx}); return false;">
-          <span class="ref-icon">🔍</span>
-          <span>Ver foto de referência</span>
-        </a>
+
       </div>
     </div>`;
 }
@@ -3642,16 +3580,7 @@ function esc(str) {
 }
 
 function restoreItemStates(sector, items) {
-  items.forEach((item, idx) => {
-    const st = getItemState(sector, idx);
-    if (st.photos && st.photos.length > 0) {
-      const preview = document.getElementById(`photos-${idx}`);
-      if (preview) {
-        preview.innerHTML = st.photos.map(src => 
-          `<img class="photo-thumb" src="${src}">`).join('');
-      }
-    }
-  });
+  // (photos removed)
 }
 
 // ===================== ORDER MANAGEMENT =====================
@@ -3669,34 +3598,57 @@ function saveOrder() {
 }
 
 function getOrderedItems(sectorKey, items) {
-  const order = sectorOrder[sectorKey];
-  if (!order || order.length !== items.length) {
-    return items.map((item, idx) => ({ ...item, _origIdx: idx }));
+  const saved = sectorOrder[sectorKey];
+  // Valid saved order
+  if (saved && saved.length === items.length) {
+    return saved.map(origIdx => ({ ...items[origIdx], _origIdx: origIdx }));
   }
-  return order.map(origIdx => ({ ...items[origIdx], _origIdx: origIdx }));
+  // Default: sort by tacto numerically ascending
+  const withIdx = items.map((item, idx) => ({ ...item, _origIdx: idx }));
+  withIdx.sort((a, b) => {
+    const ta = parseFloat(a.tacto) || 0;
+    const tb = parseFloat(b.tacto) || 0;
+    return ta - tb;
+  });
+  return withIdx;
 }
 
 function initSortable(sectorKey) {
   const el = document.getElementById(`sortable-list-${sectorKey}`);
-  if (!el || !window.Sortable) return;
-  Sortable.create(el, {
-    handle: '.drag-handle',
-    animation: 180,
-    ghostClass: 'sortable-ghost',
-    dragClass: 'sortable-drag',
-    delay: 80,
-    delayOnTouchOnly: true,
-    touchStartThreshold: 4,
-    forceFallback: false,
-    onEnd: function(evt) {
-      const items = CHECKLIST_DATA[sectorKey] || [];
-      // Rebuild order from DOM
-      const cards = el.querySelectorAll('.item-card');
-      const newOrder = Array.from(cards).map(c => parseInt(c.dataset.origIdx));
-      sectorOrder[sectorKey] = newOrder;
-      saveOrder();
-    }
-  });
+  if (!el) return;
+
+  // Load SortableJS lazily if not available yet
+  const doInit = () => {
+    if (!window.Sortable) return;
+    Sortable.create(el, {
+      handle: '.drag-handle',
+      animation: 200,
+      ghostClass: 'sortable-ghost',
+      dragClass: 'sortable-drag',
+      // forceFallback required for iOS Safari (no native DnD support)
+      forceFallback: true,
+      fallbackTolerance: 3,
+      delay: 150,
+      delayOnTouchOnly: true,
+      touchStartThreshold: 5,
+      onEnd: function() {
+        // Read order from DOM after drop
+        const cards = el.querySelectorAll('.item-card');
+        const newOrder = Array.from(cards).map(c => parseInt(c.dataset.origIdx));
+        sectorOrder[sectorKey] = newOrder;
+        saveOrder();
+      }
+    });
+  };
+
+  if (window.Sortable) {
+    doInit();
+  } else {
+    // Wait for script to load (SharePoint may slow CDN)
+    const t = setInterval(() => {
+      if (window.Sortable) { clearInterval(t); doInit(); }
+    }, 100);
+  }
 }
 
 // ===================== INTERACTIONS =====================
@@ -3708,7 +3660,8 @@ function toggleCard(idx) {
 }
 
 function toggleCardIfNotDrag(event, idx) {
-  if (event.target.classList.contains('drag-handle')) return;
+  // Don't open card if user tapped/clicked the drag handle
+  if (event.target.closest('.drag-handle')) return;
   toggleCard(idx);
 }
 
@@ -3755,30 +3708,6 @@ function saveObs(idx, value) {
   const st = getItemState(currentSector, idx);
   st.obs = value;
   saveState();
-}
-
-function handlePhoto(idx, input) {
-  if (!input.files || !input.files[0]) return;
-  const file = input.files[0];
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    const st = getItemState(currentSector, idx);
-    if (!st.photos) st.photos = [];
-    st.photos.push(e.target.result);
-    saveState();
-    const preview = document.getElementById(`photos-${idx}`);
-    if (preview) {
-      const img = document.createElement('img');
-      img.className = 'photo-thumb';
-      img.src = e.target.result;
-      preview.appendChild(img);
-    }
-  };
-  reader.readAsDataURL(file);
-}
-
-function openRefPhoto(idx) {
-  alert('💡 Link de referência não configurado.\n\nPara adicionar fotos de referência, insira a URL correspondente no campo de cada item.');
 }
 
 // ===================== PROGRESS =====================
@@ -3877,27 +3806,32 @@ function closeModalOutside(e) {
 // ===================== PDF GENERATION =====================
 async function generatePDF() {
   closeModal();
+
+  if (!currentSector) {
+    alert('⚠️ Selecione um setor antes de gerar o PDF.');
+    return;
+  }
+
   showSendOverlay('Gerando PDF...', 'Preparando dados');
 
   const { jsPDF } = window.jspdf;
   const now = new Date();
   const dateStr = now.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' });
-  const filename = `VCP_Suporte_${now.toISOString().slice(0,10)}.pdf`;
+  const filename = `VCP_Setor${currentSector}_${now.toISOString().slice(0,10)}.pdf`;
 
-  // ── 1. Collect data ──────────────────────────────────────
+  // ── 1. Collect data — CURRENT SECTOR ONLY ────────────────
+  const secItems = getOrderedItems(currentSector, CHECKLIST_DATA[currentSector] || []);
   let allItems = [], totalOk = 0, totalNok = 0, totalPend = 0;
-  Object.keys(CHECKLIST_DATA).forEach(sec => {
-    (CHECKLIST_DATA[sec] || []).forEach((item, idx) => {
-      const s = getItemState(sec, idx);
-      if (s.status === 'ok') totalOk++;
-      else if (s.status === 'nok') totalNok++;
-      else totalPend++;
-      allItems.push({ sec, item, idx, s });
-    });
+  secItems.forEach(item => {
+    const s = getItemState(currentSector, item._origIdx);
+    if (s.status === 'ok') totalOk++;
+    else if (s.status === 'nok') totalNok++;
+    else totalPend++;
+    allItems.push({ sec: currentSector, item, idx: item._origIdx, s });
   });
   const total = allItems.length;
-  const okPct  = total > 0 ? ((totalOk / total) * 100).toFixed(1) : '0.0';
-  const nokPct = total > 0 ? ((totalNok / total) * 100).toFixed(1) : '0.0';
+  const okPct  = total > 0 ? ((totalOk  / total) * 100).toFixed(1) : '0.0';
+  const nokPct = total > 0 ? ((totalNok  / total) * 100).toFixed(1) : '0.0';
   const pendPct= total > 0 ? ((totalPend / total) * 100).toFixed(1) : '0.0';
 
   // ── 2. Render chart to PNG ───────────────────────────────
@@ -3936,8 +3870,7 @@ async function generatePDF() {
   const PW = 210, PH = 297, ML = 14, MR = 14, usableW = PW - ML - MR;
   let y = 0;
 
-  // helpers
-  const hex2rgb = h => { const r = parseInt(h.slice(1,3),16), g=parseInt(h.slice(3,5),16), b=parseInt(h.slice(5,7),16); return [r,g,b]; };
+  const hex2rgb = h => [parseInt(h.slice(1,3),16), parseInt(h.slice(3,5),16), parseInt(h.slice(5,7),16)];
   function setFill(hex)  { const [r,g,b] = hex2rgb(hex); doc.setFillColor(r,g,b); }
   function setColor(hex) { const [r,g,b] = hex2rgb(hex); doc.setTextColor(r,g,b); }
   function setDraw(hex)  { const [r,g,b] = hex2rgb(hex); doc.setDrawColor(r,g,b); }
@@ -3945,48 +3878,40 @@ async function generatePDF() {
   function checkPage(needed = 10) {
     if (y + needed > PH - 10) { doc.addPage(); y = 14; }
   }
-
   function sectionTitle(text, color = '#001e50') {
     checkPage(12);
-    setFill(color); doc.setDrawColor(0,0,0); doc.setLineWidth(0);
+    setFill(color); doc.setLineWidth(0);
     doc.rect(ML, y, usableW, 7, 'F');
-    doc.setFont('helvetica','bold'); doc.setFontSize(10);
-    setColor('#ffffff');
+    doc.setFont('helvetica','bold'); doc.setFontSize(10); setColor('#ffffff');
     doc.text(text, ML + 3, y + 5);
     y += 9;
   }
-
   function wrapText(text, maxW, fontSize) {
     doc.setFontSize(fontSize);
     return doc.splitTextToSize(String(text || ''), maxW);
   }
 
-  // ── PAGE 1: Header ───────────────────────────────────────
+  // ── HEADER ───────────────────────────────────────────────
   setFill('#001e50');
   doc.rect(0, 0, PW, 28, 'F');
-  doc.setFont('helvetica','bold'); doc.setFontSize(18);
-  setColor('#ffffff');
+  doc.setFont('helvetica','bold'); doc.setFontSize(18); setColor('#ffffff');
   doc.text('VCP Suporte Montagem', ML, 12);
-  doc.setFont('helvetica','normal'); doc.setFontSize(9);
-  setColor('#a0b4d0');
-  doc.text('Checklist de Riscos  —  ' + dateStr, ML, 19);
+  doc.setFont('helvetica','normal'); doc.setFontSize(9); setColor('#a0b4d0');
+  doc.text('Checklist de Riscos  —  Setor ' + currentSector + '  —  ' + dateStr, ML, 19);
   doc.text('Volkswagen do Brasil', PW - MR, 19, { align: 'right' });
   y = 34;
 
   // ── SUMMARY BOXES ────────────────────────────────────────
   const bw = (usableW - 6) / 3;
-  const boxes = [
-    { label:'OK', value:totalOk, pct:okPct+'%', bg:'#e8f5e9', border:'#00c853', tc:'#1b5e20', vc:'#00c853' },
-    { label:'NOK', value:totalNok, pct:nokPct+'%', bg:'#ffebee', border:'#d50000', tc:'#b71c1c', vc:'#d50000' },
+  [
+    { label:'OK',       value:totalOk,   pct:okPct+'%',   bg:'#e8f5e9', border:'#00c853', tc:'#1b5e20', vc:'#00c853' },
+    { label:'NOK',      value:totalNok,  pct:nokPct+'%',  bg:'#ffebee', border:'#d50000', tc:'#b71c1c', vc:'#d50000' },
     { label:'Pendente', value:totalPend, pct:pendPct+'%', bg:'#f5f5f5', border:'#9e9e9e', tc:'#424242', vc:'#757575' }
-  ];
-  boxes.forEach((b, i) => {
+  ].forEach((b, i) => {
     const x = ML + i * (bw + 3);
-    setFill(b.bg); setDraw(b.border);
-    doc.setLineWidth(0.6);
+    setFill(b.bg); setDraw(b.border); doc.setLineWidth(0.6);
     doc.roundedRect(x, y, bw, 18, 2, 2, 'FD');
-    doc.setFont('helvetica','bold'); doc.setFontSize(20);
-    setColor(b.vc);
+    doc.setFont('helvetica','bold'); doc.setFontSize(20); setColor(b.vc);
     doc.text(String(b.value), x + bw/2, y + 9, { align:'center' });
     doc.setFontSize(8); setColor(b.tc);
     doc.text(b.label + '  ' + b.pct, x + bw/2, y + 14.5, { align:'center' });
@@ -3996,17 +3921,16 @@ async function generatePDF() {
   // ── CHART ────────────────────────────────────────────────
   if (chartDataUrl) {
     checkPage(72);
-    sectionTitle('Gráfico Percentual');
+    sectionTitle('Gráfico Percentual — Setor ' + currentSector);
     const chartW = 90, chartH = 58;
     const cx = ML + (usableW - chartW) / 2;
-    setFill('#fafafa'); setDraw('#e0e0e0');
-    doc.setLineWidth(0.3);
+    setFill('#fafafa'); setDraw('#e0e0e0'); doc.setLineWidth(0.3);
     doc.rect(ML, y, usableW, chartH + 6, 'FD');
     doc.addImage(chartDataUrl, 'PNG', cx, y + 3, chartW, chartH);
     y += chartH + 10;
   }
 
-  // ── NOK ITEMS TABLE ──────────────────────────────────────
+  // ── NOK TABLE ────────────────────────────────────────────
   const nokItems = allItems.filter(x => x.s.status === 'nok');
   sectionTitle(`Itens NOK  (${nokItems.length})`, '#c62828');
 
@@ -4015,194 +3939,65 @@ async function generatePDF() {
     doc.setFont('helvetica','italic'); doc.setFontSize(9); setColor('#888888');
     doc.text('Nenhum item NOK registrado.', ML + 3, y + 5); y += 10;
   } else {
-    // Table header
-    const cols = { setor:20, item:12, op:62, modelo:30, obs:58 };
+    const cols = { item:14, op:70, modelo:34, obs:64 };
     const rowH = 6.5;
-    const drawTableHeader = () => {
+    const drawNokHeader = () => {
       checkPage(10);
       setFill('#c62828'); doc.rect(ML, y, usableW, rowH, 'F');
       doc.setFont('helvetica','bold'); doc.setFontSize(7.5); setColor('#ffffff');
       let cx2 = ML + 1.5;
-      ['Setor','Item','Operação','Modelo','Observação'].forEach((h, i) => {
-        const w = Object.values(cols)[i];
+      [['Item',cols.item],['Operação',cols.op],['Modelo',cols.modelo],['Observação',cols.obs]].forEach(([h,w]) => {
         doc.text(h, cx2, y + 4.5); cx2 += w;
       });
       y += rowH;
     };
-    drawTableHeader();
-
+    drawNokHeader();
     nokItems.forEach((x, ri) => {
-      // Calc row height (may need wrapping for long text)
       const opLines  = wrapText(x.item.operacao || '', cols.op - 2, 7.5);
       const obsLines = wrapText(x.s.obs || '', cols.obs - 2, 7.5);
-      const maxLines = Math.max(opLines.length, obsLines.length, 1);
-      const rh = Math.max(rowH, maxLines * 3.8 + 2);
-
+      const rh = Math.max(rowH, Math.max(opLines.length, obsLines.length, 1) * 3.8 + 2);
       checkPage(rh + 2);
-      // Row bg
       setFill(ri % 2 === 0 ? '#fff5f5' : '#ffffff');
       doc.rect(ML, y, usableW, rh, 'F');
-      setDraw('#f5c6c6'); doc.setLineWidth(0.2);
-      doc.rect(ML, y, usableW, rh, 'D');
-
+      setDraw('#f5c6c6'); doc.setLineWidth(0.2); doc.rect(ML, y, usableW, rh, 'D');
       doc.setFont('helvetica','normal'); doc.setFontSize(7.5); setColor('#333333');
       let cx2 = ML + 1.5;
-      const cells = [
-        { text: x.sec, w: cols.setor },
-        { text: '#' + x.item.id, w: cols.item },
-        { text: x.item.operacao || '', w: cols.op },
-        { text: x.item.modelo || '', w: cols.modelo },
-        { text: x.s.obs || '—', w: cols.obs }
-      ];
-      cells.forEach(cell => {
-        const lines = wrapText(cell.text, cell.w - 2, 7.5);
-        doc.text(lines, cx2, y + 4); cx2 += cell.w;
+      [['#'+x.item.id,cols.item],[x.item.operacao||'',cols.op],[x.item.modelo||'',cols.modelo],[x.s.obs||'—',cols.obs]].forEach(([t,w]) => {
+        doc.text(wrapText(t, w-2, 7.5), cx2, y + 4); cx2 += w;
       });
-
-      // Photos for NOK item
-      const photos = x.s.photos || [];
-      if (photos.length > 0) {
-        y += rh;
-        checkPage(28);
-        doc.setFont('helvetica','bolditalic'); doc.setFontSize(7); setColor('#9e0000');
-        doc.text('  Fotos:', ML + 2, y + 4);
-        let px = ML + 16;
-        photos.forEach(src => {
-          try {
-            if (px + 22 > PW - MR) { y += 24; px = ML + 16; checkPage(24); }
-            doc.addImage(src, 'JPEG', px, y, 20, 20);
-            px += 22;
-          } catch(e) {}
-        });
-        y += 24;
-      } else {
-        y += rh;
-      }
+      y += rh;
     });
     y += 3;
   }
 
-  // ── OK ITEMS WITH OBS/PHOTOS ─────────────────────────────
-  const okExtras = allItems.filter(x => x.s.status === 'ok' && (x.s.obs || (x.s.photos && x.s.photos.length > 0)));
+  // ── OK ITEMS WITH OBS ────────────────────────────────────
+  const okExtras = allItems.filter(x => x.s.status === 'ok' && x.s.obs);
   if (okExtras.length > 0) {
     checkPage(16);
-    sectionTitle(`Itens OK com Observações / Fotos  (${okExtras.length})`, '#2e7d32');
+    sectionTitle(`Itens OK com Observações  (${okExtras.length})`, '#2e7d32');
     const rowH2 = 6.5;
-    const drawOkHeader = () => {
-      checkPage(10);
-      setFill('#2e7d32'); doc.rect(ML, y, usableW, rowH2, 'F');
-      doc.setFont('helvetica','bold'); doc.setFontSize(7.5); setColor('#ffffff');
-      let cx2 = ML + 1.5;
-      [['Setor',20],['Item',12],['Operação',72],['Observação',78]].forEach(([h,w]) => {
-        doc.text(h, cx2, y + 4.5); cx2 += w;
-      });
-      y += rowH2;
-    };
-    drawOkHeader();
+    checkPage(10);
+    setFill('#2e7d32'); doc.rect(ML, y, usableW, rowH2, 'F');
+    doc.setFont('helvetica','bold'); doc.setFontSize(7.5); setColor('#ffffff');
+    let cx2 = ML + 1.5;
+    [['Item',14],['Operação',84],['Observação',84]].forEach(([h,w]) => { doc.text(h, cx2, y + 4.5); cx2 += w; });
+    y += rowH2;
     okExtras.forEach((x, ri) => {
-      const obsLines = wrapText(x.s.obs || '', 76, 7.5);
-      const opLines  = wrapText(x.item.operacao || '', 70, 7.5);
-      const maxL = Math.max(opLines.length, obsLines.length, 1);
-      const rh = Math.max(rowH2, maxL * 3.8 + 2);
+      const opL  = wrapText(x.item.operacao||'', 82, 7.5);
+      const obsL = wrapText(x.s.obs||'', 82, 7.5);
+      const rh = Math.max(rowH2, Math.max(opL.length, obsL.length, 1) * 3.8 + 2);
       checkPage(rh + 2);
       setFill(ri % 2 === 0 ? '#f5fff8' : '#ffffff'); doc.rect(ML, y, usableW, rh, 'F');
       setDraw('#c8e6c9'); doc.setLineWidth(0.2); doc.rect(ML, y, usableW, rh, 'D');
       doc.setFont('helvetica','normal'); doc.setFontSize(7.5); setColor('#333333');
-      let cx2 = ML + 1.5;
-      [[x.sec,20],['#'+x.item.id,12],[x.item.operacao||'',72],[x.s.obs||'—',78]].forEach(([t,w]) => {
+      cx2 = ML + 1.5;
+      [['#'+x.item.id,14],[x.item.operacao||'',84],[x.s.obs||'—',84]].forEach(([t,w]) => {
         doc.text(wrapText(t, w-2, 7.5), cx2, y + 4); cx2 += w;
       });
-      const photos = x.s.photos || [];
-      if (photos.length > 0) {
-        y += rh;
-        checkPage(28);
-        doc.setFont('helvetica','bolditalic'); doc.setFontSize(7); setColor('#1b5e20');
-        doc.text('  Fotos:', ML + 2, y + 4);
-        let px = ML + 16;
-        photos.forEach(src => {
-          try {
-            if (px + 22 > PW - MR) { y += 24; px = ML + 16; checkPage(24); }
-            doc.addImage(src, 'JPEG', px, y, 20, 20);
-            px += 22;
-          } catch(e) {}
-        });
-        y += 24;
-      } else {
-        y += rh;
-      }
+      y += rh;
     });
     y += 3;
   }
-
-  // ── FULL DETAIL PER SECTOR ───────────────────────────────
-  checkPage(16);
-  sectionTitle('Detalhamento Completo por Setor', '#001e50');
-
-  Object.keys(CHECKLIST_DATA).forEach(sec => {
-    const items = CHECKLIST_DATA[sec] || [];
-    if (!items.length) return;
-    checkPage(14);
-
-    // Sector sub-header
-    setFill('#1565c0'); doc.rect(ML, y, usableW, 6, 'F');
-    doc.setFont('helvetica','bold'); doc.setFontSize(8.5); setColor('#ffffff');
-    doc.text(`Setor ${sec}  (${items.length} itens)`, ML + 2, y + 4.2);
-    y += 7;
-
-    // column header
-    const rHdr = 5.5;
-    setFill('#e3eaf5'); doc.rect(ML, y, usableW, rHdr, 'F');
-    setDraw('#c0cfe0'); doc.setLineWidth(0.2); doc.rect(ML, y, usableW, rHdr, 'D');
-    doc.setFont('helvetica','bold'); doc.setFontSize(7); setColor('#001e50');
-    const detCols = [[12,'Item'],[52,'Operação'],[28,'Modelo'],[16,'Status'],[74,'Observação']];
-    let cx2 = ML + 1.5;
-    detCols.forEach(([w,h]) => { doc.text(h, cx2, y + 3.8); cx2 += w; });
-    y += rHdr;
-
-    items.forEach((item, idx) => {
-      const s = getItemState(sec, idx);
-      const stText = s.status === 'ok' ? 'OK' : s.status === 'nok' ? 'NOK' : '—';
-      const stColor = s.status === 'ok' ? '#00c853' : s.status === 'nok' ? '#d50000' : '#9e9e9e';
-      const rowBg = s.status === 'ok' ? '#f5fff8' : s.status === 'nok' ? '#fff5f5' : '#fafafa';
-      const obsLines = wrapText(s.obs || '', 72, 7);
-      const opLines  = wrapText(item.operacao || item.descricao || '', 50, 7);
-      const rh = Math.max(5.5, Math.max(opLines.length, obsLines.length, 1) * 3.4 + 2);
-
-      checkPage(rh + 1);
-      setFill(rowBg); doc.rect(ML, y, usableW, rh, 'F');
-      setDraw('#e0e0e0'); doc.setLineWidth(0.15); doc.rect(ML, y, usableW, rh, 'D');
-
-      doc.setFont('helvetica','normal'); doc.setFontSize(7); setColor('#333333');
-      cx2 = ML + 1.5;
-      [['#'+item.id,12],[item.operacao||item.descricao||'',52],[item.modelo||'',28]].forEach(([t,w]) => {
-        doc.text(wrapText(t, w-2, 7), cx2, y + 3.8); cx2 += w;
-      });
-      // Status badge
-      doc.setFont('helvetica','bold'); doc.setFontSize(7.5);
-      setColor(stColor);
-      doc.text(stText, cx2 + 8, y + 3.8, { align:'center' }); cx2 += 16;
-      doc.setFont('helvetica','normal'); doc.setFontSize(7); setColor('#333333');
-      doc.text(obsLines, cx2, y + 3.8);
-      y += rh;
-
-      // Inline photos for NOK in detail
-      if (s.status === 'nok' && s.photos && s.photos.length > 0) {
-        checkPage(26);
-        let px2 = ML + 18;
-        doc.setFont('helvetica','bolditalic'); doc.setFontSize(6.5); setColor('#9e0000');
-        doc.text('Fotos:', ML + 2, y + 4);
-        s.photos.forEach(src => {
-          try {
-            if (px2 + 20 > PW - MR) { y += 22; px2 = ML + 18; checkPage(22); }
-            doc.addImage(src, 'JPEG', px2, y, 18, 18);
-            px2 += 20;
-          } catch(e) {}
-        });
-        y += 22;
-      }
-    });
-    y += 4;
-  });
 
   // ── FOOTER on all pages ──────────────────────────────────
   const pageCount = doc.getNumberOfPages();
@@ -4219,40 +4014,44 @@ async function generatePDF() {
 }
 
 // ===================== SETTINGS =====================
-let emailCfg = { recipients: '' };
+let emailCfg = { flowUrl: '', recipients: '' };
 
 function loadEmailConfig() {
   try {
-    const saved = localStorage.getItem('vcp_email_cfg_v2');
+    const saved = localStorage.getItem('vcp_email_cfg_v3');
     if (saved) emailCfg = { ...emailCfg, ...JSON.parse(saved) };
   } catch(e) {}
 }
 
 function saveEmailSettings() {
+  emailCfg.flowUrl    = document.getElementById('cfg-flow-url').value.trim();
   emailCfg.recipients = document.getElementById('cfg-recipients').value.trim();
-  localStorage.setItem('vcp_email_cfg_v2', JSON.stringify(emailCfg));
+  localStorage.setItem('vcp_email_cfg_v3', JSON.stringify(emailCfg));
   updateConfigStatus();
   closeSettings();
-  alert('✅ Destinatários salvos!');
+  alert('✅ Configurações salvas!');
 }
 
 function isEmailConfigured() {
-  return !!emailCfg.recipients;
+  return !!(emailCfg.flowUrl && emailCfg.recipients);
 }
 
 function updateConfigStatus() {
   const box = document.getElementById('config-status-box');
   if (!box) return;
   if (isEmailConfigured()) {
-    box.innerHTML = `<div class="config-status ok">✓ Enviará para: ${emailCfg.recipients}</div>`;
+    box.innerHTML = `<div class="config-status ok">✓ Power Automate configurado — enviará para: ${emailCfg.recipients}</div>`;
+  } else if (!emailCfg.flowUrl) {
+    box.innerHTML = `<div class="config-status not-ok">⚠️ Cole a URL do fluxo Power Automate abaixo.</div>`;
   } else {
-    box.innerHTML = `<div class="config-status not-ok">⚠️ Informe os e-mails destinatários abaixo.</div>`;
+    box.innerHTML = `<div class="config-status not-ok">⚠️ Informe os e-mails destinatários.</div>`;
   }
 }
 
 function openSettings() {
   closeModal();
   loadEmailConfig();
+  document.getElementById('cfg-flow-url').value   = emailCfg.flowUrl    || '';
   document.getElementById('cfg-recipients').value = emailCfg.recipients || '';
   updateConfigStatus();
   document.getElementById('settings-modal').classList.add('active');
@@ -4348,7 +4147,7 @@ async function sendEmail() {
     chartImgTag = '<p style="color:#888;font-size:12px;text-align:center;">[Gráfico não disponível]</p>';
   }
 
-  showSendOverlay('Construindo e-mail...', 'Incluindo observações e fotos');
+  showSendOverlay('Construindo e-mail...', 'Incluindo observações');
 
   // ── 3. Montar seção NOK com obs + fotos ──────────
   const nokItems = allItems.filter(x => x.s.status === 'nok');
@@ -4357,10 +4156,6 @@ async function sendEmail() {
     nokRowsHtml = `<tr><td colspan="6" style="padding:14px;text-align:center;color:#888;font-size:12px;">Nenhum item NOK registrado ✓</td></tr>`;
   } else {
     nokItems.forEach(x => {
-      const photos = (x.s.photos || []);
-      const photoHtml = photos.length > 0
-        ? photos.map(src => `<img src="${src}" style="width:70px;height:70px;object-fit:cover;border-radius:6px;border:1px solid #ddd;margin:2px;">`).join('')
-        : '<span style="color:#bbb;font-size:11px;">—</span>';
       nokRowsHtml += `
         <tr style="background:#fff5f5;">
           <td style="padding:7px 8px;border:1px solid #f5c6c6;font-size:11px;color:#555;">${x.sec}</td>
@@ -4368,32 +4163,26 @@ async function sendEmail() {
           <td style="padding:7px 8px;border:1px solid #f5c6c6;font-size:11px;">${x.item.operacao||''}</td>
           <td style="padding:7px 8px;border:1px solid #f5c6c6;font-size:11px;">${x.item.modelo||''}</td>
           <td style="padding:7px 8px;border:1px solid #f5c6c6;font-size:11px;color:#c62828;">${x.s.obs || '—'}</td>
-          <td style="padding:7px 8px;border:1px solid #f5c6c6;">${photoHtml}</td>
         </tr>`;
     });
   }
 
-  // ── 4. Montar seção OK com obs/fotos (se houver) ─
+  // ── 4. OK com observações ────────────────────────
   let okWithExtrasHtml = '';
-  const okWithExtras = allItems.filter(x => x.s.status === 'ok' && (x.s.obs || (x.s.photos && x.s.photos.length > 0)));
+  const okWithExtras = allItems.filter(x => x.s.status === 'ok' && x.s.obs);
   if (okWithExtras.length > 0) {
     let rows = '';
     okWithExtras.forEach(x => {
-      const photos = (x.s.photos || []);
-      const photoHtml = photos.length > 0
-        ? photos.map(src => `<img src="${src}" style="width:65px;height:65px;object-fit:cover;border-radius:5px;border:1px solid #ddd;margin:2px;">`).join('')
-        : '';
       rows += `
         <tr style="background:#f5fff8;">
           <td style="padding:6px 8px;border:1px solid #c8e6c9;font-size:11px;color:#555;">${x.sec}</td>
           <td style="padding:6px 8px;border:1px solid #c8e6c9;font-size:11px;">#${x.item.id}</td>
           <td style="padding:6px 8px;border:1px solid #c8e6c9;font-size:11px;">${x.item.operacao||''}</td>
           <td style="padding:6px 8px;border:1px solid #c8e6c9;font-size:11px;color:#2e7d32;">${x.s.obs || '—'}</td>
-          <td style="padding:6px 8px;border:1px solid #c8e6c9;">${photoHtml}</td>
         </tr>`;
     });
     okWithExtrasHtml = `
-      <h3 style="font-size:14px;font-weight:700;color:#1b5e20;border-bottom:2px solid #1b5e20;padding-bottom:6px;margin:20px 0 10px;">✓ Itens OK com observações / fotos</h3>
+      <h3 style="font-size:14px;font-weight:700;color:#1b5e20;border-bottom:2px solid #1b5e20;padding-bottom:6px;margin:20px 0 10px;">✓ Itens OK com observações</h3>
       <table style="width:100%;border-collapse:collapse;margin-bottom:20px;">
         <thead>
           <tr style="background:#2e7d32;color:#fff;">
@@ -4401,7 +4190,6 @@ async function sendEmail() {
             <th style="padding:6px 8px;border:1px solid #c8e6c9;font-size:10px;text-align:left;">Item</th>
             <th style="padding:6px 8px;border:1px solid #c8e6c9;font-size:10px;text-align:left;">Operação</th>
             <th style="padding:6px 8px;border:1px solid #c8e6c9;font-size:10px;text-align:left;">Observação</th>
-            <th style="padding:6px 8px;border:1px solid #c8e6c9;font-size:10px;text-align:left;">Fotos</th>
           </tr>
         </thead>
         <tbody>${rows}</tbody>
@@ -4483,7 +4271,6 @@ async function sendEmail() {
           <th style="padding:7px 8px;border:1px solid #f5c6c6;font-size:10px;text-align:left;">Operação</th>
           <th style="padding:7px 8px;border:1px solid #f5c6c6;font-size:10px;text-align:left;">Modelo</th>
           <th style="padding:7px 8px;border:1px solid #f5c6c6;font-size:10px;text-align:left;">Observação</th>
-          <th style="padding:7px 8px;border:1px solid #f5c6c6;font-size:10px;text-align:left;">Fotos</th>
         </tr>
       </thead>
       <tbody>${nokRowsHtml}</tbody>
@@ -4503,10 +4290,10 @@ async function sendEmail() {
 </body>
 </html>`;
 
-  // ── 6. Enviar via Netlify Function ───────────────
+  // ── 6. Enviar via Power Automate ─────────────────
   showSendOverlay('Enviando e-mail...', emailCfg.recipients);
   try {
-    const resp = await fetch('/.netlify/functions/send-email', {
+    const resp = await fetch(emailCfg.flowUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -4515,16 +4302,22 @@ async function sendEmail() {
         html: htmlBody
       })
     });
-    const result = await resp.json();
     hideSendOverlay();
-    if (resp.ok) {
-      alert(`✅ E-mail enviado!\n\nDestinatário(s): ${emailCfg.recipients}\nOK: ${totalOk} (${okPct}%) | NOK: ${totalNok} (${nokPct}%) | Pendente: ${totalPend}`);
+    // Power Automate HTTP trigger returns 202 Accepted on success
+    if (resp.ok || resp.status === 202) {
+      alert(`✅ E-mail enviado com sucesso!\n\nDestinatário(s): ${emailCfg.recipients}\nOK: ${totalOk} (${okPct}%) | NOK: ${totalNok} (${nokPct}%) | Pendente: ${totalPend}`);
     } else {
-      alert(`❌ Falha ao enviar e-mail.\n\nErro: ${result.error || 'Desconhecido'}\n\n💡 Verifique as variáveis SMTP no painel Netlify.`);
+      const txt = await resp.text().catch(() => '');
+      alert(`❌ O fluxo Power Automate retornou erro ${resp.status}.\n\n${txt.slice(0,200)}\n\n💡 Verifique se o fluxo está ativo no Power Automate.`);
     }
   } catch(err) {
     hideSendOverlay();
-    alert(`❌ Erro de conexão.\n\nVerifique se o site está publicado no Netlify.\nDetalhe: ${err.message}`);
+    // CORS note: Power Automate may block CORS from file:// — in SharePoint it works normally
+    if (err.message && err.message.includes('Failed to fetch')) {
+      alert(`❌ Erro CORS / rede.\n\nSe estiver abrindo o arquivo local (file://), o CORS bloqueia a chamada.\nAcesse o arquivo via SharePoint (https://) para funcionar.\n\nDetalhe: ${err.message}`);
+    } else {
+      alert(`❌ Erro de conexão ao Power Automate.\nDetalhe: ${err.message}`);
+    }
   }
 }
 </script>
